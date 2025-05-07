@@ -26,7 +26,6 @@ public class PedidoCompra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_pedido_compra")
     private Integer idPedidoCompra;
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="codigo_compra")
     private Integer codigoCompra;
     @Column(name="fecha_pedido")
@@ -37,7 +36,6 @@ public class PedidoCompra {
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="id_proveedor", referencedColumnName = "id_proveedor")
     private Proveedor proveedor;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_estado_pedido", referencedColumnName = "id_estado_pedido")
     private EstadoPedido estadoPedido;

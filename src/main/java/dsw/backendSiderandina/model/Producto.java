@@ -25,7 +25,6 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_producto")
     private Integer idProducto;
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer sku;
     private String nombre;
     @Column(name="precio_venta_base")

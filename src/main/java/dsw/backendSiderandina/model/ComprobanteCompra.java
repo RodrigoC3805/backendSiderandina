@@ -27,7 +27,6 @@ public class ComprobanteCompra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_comprobante_compra")
     private Integer idComprobanteCompra;
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "numero_comprobante")
     private Integer numeroComprobante;
     @Column(name = "fecha_emision")
