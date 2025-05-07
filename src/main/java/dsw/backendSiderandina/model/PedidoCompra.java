@@ -1,5 +1,7 @@
 package dsw.backendSiderandina.model;
 
+import java.sql.Timestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,35 +15,31 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="producto")
-public class Producto {
+@Table(name="pedido_compra")
+public class PedidoCompra {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_producto")
-    private Integer idProducto;
+    @Column(name="id_pedido_compra")
+    private Integer idPedidoCompra;
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer sku;
-    private String nombre;
-    @Column(name="precio_venta_base")
-    private Double precioVentaBase;
-    @Column(name="costo_unitario_base")
-    private Double costoUnitarioBase;
-    private Integer stock;
-    @Column(name="stock_min")
-    private Integer stockMin;
-    @Column(name="url_imagen")
-    private String urlImagen;
-
+    @Column(name="codigo_compra")
+    private Integer codigoCompra;
+    @Column(name="fecha_pedido")
+    private Timestamp fechaPedido;
+    @Column(name="monto_total")
+    private Double montoTotal;
+    
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name= "id_cat_prod",referencedColumnName = "id_cat_prod")
-    private CategoriaProducto catProd;
+    @JoinColumn(name="id_proveedor", referencedColumnName = "id_proveedor")
+    private Proveedor proveedor;
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_unidades_medida", referencedColumnName = "id_unidades_medida")
-    private UnidadesMedida unidadesMedida;
+    @JoinColumn(name = "id_estado_pedido", referencedColumnName = "id_estado_pedido")
+    private EstadoPedido estadoPedido;
+
 }
