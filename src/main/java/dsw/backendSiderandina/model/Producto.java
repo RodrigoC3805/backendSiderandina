@@ -25,6 +25,7 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_producto")
     private Integer idProducto;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer sku;
     private String nombre;
     @Column(name="precio_venta_base")
@@ -34,13 +35,11 @@ public class Producto {
     private Integer stock;
     @Column(name="stock_min")
     private Integer stockMin;
-    @Column(name="url_imagen")
-    private String urlImagen;
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name= "id_cat_prod",referencedColumnName = "id_cat_prod")
-    private CategoriaProducto catProd;
+    private CategoriaProducto idCatProd;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_unidades_medida", referencedColumnName = "id_unidades_medida")
-    private UnidadesMedida unidadesMedida;
+    private UnidadesMedida idUnidadesMedida;
 }
