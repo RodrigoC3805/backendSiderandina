@@ -1,5 +1,8 @@
 package dsw.backendSiderandina.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import dsw.backendSiderandina.model.CategoriaProducto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +20,15 @@ public class CategoriaProductoResponse {
 
     public static CategoriaProductoResponse fromEntity(CategoriaProducto categoriaProducto) {
         return CategoriaProductoResponse.builder()
-        .idCatProd(categoriaProducto.getIdCatProd())
-        .nombre(categoriaProducto.getNombre())
-        .urlImagen(categoriaProducto.getUrlImagen())
-        .build();
+                .idCatProd(categoriaProducto.getIdCatProd())
+                .nombre(categoriaProducto.getNombre())
+                .urlImagen(categoriaProducto.getUrlImagen())
+                .build();
+    }
+
+    public static List<CategoriaProductoResponse> fromEntities(List<CategoriaProducto> categoriaProducto) {
+            return categoriaProducto.stream()
+                .map(CategoriaProductoResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 }
