@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dsw.backendSiderandina.dto.CategoriaProductoResponse;
 import dsw.backendSiderandina.model.CategoriaProducto;
 import dsw.backendSiderandina.repository.CategoriaProductoRepository;
 
@@ -13,7 +14,7 @@ public class CategoriaProductoService {
     @Autowired
     CategoriaProductoRepository categoriaProductoRepository;
 
-    public List<CategoriaProducto> getCategoriaProducto() {
+    public List<CategoriaProductoResponse> getCategoriaProducto() {
         return categoriaProductoRepository.findAll();
     }
 }

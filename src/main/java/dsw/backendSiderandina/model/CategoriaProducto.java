@@ -23,4 +23,6 @@ public class CategoriaProducto {
     @Column(name="id_cat_prod")
     private Integer idCatProd;
     private String nombre;
+    @Column(name="url_imagen")
+    private String urlImagen;
 }
