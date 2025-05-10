@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import dsw.backendSiderandina.dto.EmpleadoListItem;
 import dsw.backendSiderandina.dto.TrabajadorRequest;
 import dsw.backendSiderandina.dto.TrabajadorResponse;
 import dsw.backendSiderandina.service.TrabajadorService;
@@ -20,9 +21,9 @@ public class TrabajadorController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
-    TrabajadorService trabajadorService;
+    private TrabajadorService trabajadorService;
 
-    @GetMapping
+    @GetMapping ("/empleados")
     public ResponseEntity<?> getTrabajadores() {
         List<TrabajadorResponse> listaTrabajadoresResponse;
         try {
