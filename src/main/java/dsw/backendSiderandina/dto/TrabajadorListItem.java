@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class EmpleadoListItem {
+public class TrabajadorListItem {
     private Integer idTrabajador;
     private String nombreCompleto;
     private String tipoDocumento;

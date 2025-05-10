@@ -1,19 +1,18 @@
 package dsw.backendSiderandina.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dsw.backendSiderandina.dto.TrabajadorRequest;
 import dsw.backendSiderandina.dto.TrabajadorResponse;
+import dsw.backendSiderandina.dto.TrabajadorListItem;
 import dsw.backendSiderandina.model.Trabajador;
+import dsw.backendSiderandina.model.Contrato;
 import dsw.backendSiderandina.repository.TrabajadorRepository;
 import dsw.backendSiderandina.repository.TipoDocumentoRepository;
 import dsw.backendSiderandina.repository.TipoTrabajadorRepository;
-import dsw.backendSiderandina.dto.EmpleadoListItem;
-import dsw.backendSiderandina.model.Contrato;
 import dsw.backendSiderandina.repository.ContratoRepository;
 
 @Service
@@ -30,10 +29,6 @@ public class TrabajadorService {
     @Autowired
     ContratoRepository contratoRepository;
 
-    public List<TrabajadorResponse> listTrabajadores() {
-        return TrabajadorResponse.fromEntities(trabajadorRepository.findAll());
-    }
-
     public TrabajadorResponse createTrabajador(TrabajadorRequest trabajadorRequest) {
         Trabajador trabajador = Trabajador.builder()
                 .tipoDocumento(tipoDocumentoRepository.findById(trabajadorRequest.getIdTipoDocumento()).orElse(null))
@@ -49,26 +44,31 @@ public class TrabajadorService {
         return TrabajadorResponse.fromEntity(trabajador);
     }
 
-    public List<EmpleadoListItem> listarEmpleados() {
-        List<Trabajador> trabajadores = trabajadorRepository.findAll();
-        return trabajadores.stream().map(trabajador -> {
-            // Obtener contrato activo (puedes ajustar la lógica según tu modelo)
-            Contrato contratoActivo = contratoRepository.findFirstByTrabajadorIdTrabajadorAndEstadoContratoDescripcion(
-                trabajador.getIdTrabajador(), "Activo"
-            );
-            String cargo = trabajador.getTipoTrabajador() != null ? trabajador.getTipoTrabajador().getDescripcion() : "";
-            Double sueldo = contratoActivo != null ? contratoActivo.getRemuneracion().doubleValue() : null;
-            String estadoContrato = contratoActivo != null ? "Activo" : "Inactivo";
-            return new EmpleadoListItem(
-                trabajador.getIdTrabajador(),
-                trabajador.getNombres() + " " + trabajador.getApellidoPaterno() + " " + trabajador.getApellidoMaterno(),
-                trabajador.getTipoDocumento() != null ? trabajador.getTipoDocumento().getDescripcion() : "",
-                trabajador.getNumeroDocumento(),
-                cargo,
-                sueldo,
-                "Soles",
-                estadoContrato
-            );
-        }).collect(Collectors.toList());
+    // Este es el método que tu frontend debe consumir
+    public List<TrabajadorListItem> listarTrabajadores() {
+        return trabajadorRepository.findAll().stream()
+            .map(trabajador -> {
+                // Busca el contrato activo del trabajador
+                Contrato contrato = contratoRepository.findFirstByTrabajadorIdTrabajadorAndEstadoContratoDescripcion(
+                    trabajador.getIdTrabajador(), "Activo"
+                );
+                Double sueldo = contrato != null && contrato.getRemuneracion() != null ? contrato.getRemuneracion() : 0.0;
+                String moneda = "Soles"; // Cambia si tienes el campo en tu modelo
+                String estadoContrato = contrato != null && contrato.getEstadoContrato() != null
+                        ? contrato.getEstadoContrato().getDescripcion()
+                        : "";
+
+                return new TrabajadorListItem(
+                    trabajador.getIdTrabajador(),
+                    trabajador.getNombres() + " " + trabajador.getApellidoPaterno() + " " + trabajador.getApellidoMaterno(),
+                    trabajador.getTipoDocumento() != null ? trabajador.getTipoDocumento().getDescripcion() : "",
+                    trabajador.getNumeroDocumento(),
+                    trabajador.getTipoTrabajador() != null ? trabajador.getTipoTrabajador().getDescripcion() : "",
+                    sueldo,
+                    moneda,
+                    estadoContrato
+                );
+            })
+            .toList();
     }
 }
