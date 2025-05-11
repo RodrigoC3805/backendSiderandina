@@ -23,7 +23,7 @@ public class ComprobanteCompraController {
     @Autowired
     ComprobanteCompraRepository comprobanteCompraRepository;
 
-    @GetMapping("/find")
+    @PostMapping("/find")
     public ResponseEntity<?> getComprobanteComprabyPedidoId(@RequestBody PedidoCompra pedidoCompra) {
         ComprobanteCompra comprobanteCompra = null;
         try {
