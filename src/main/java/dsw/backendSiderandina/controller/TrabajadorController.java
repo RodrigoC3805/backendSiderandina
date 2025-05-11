@@ -17,14 +17,15 @@ public class TrabajadorController {
     @Autowired
     private TrabajadorService trabajadorService;
 
-    @PostMapping
-    public TrabajadorResponse createTrabajador(@RequestBody TrabajadorRequest trabajadorRequest) {
-        return trabajadorService.createTrabajador(trabajadorRequest);
-    }
-
     @GetMapping("/trabajadores")
     public ResponseEntity<List<TrabajadorListItem>> getTrabajadores() {
         List<TrabajadorListItem> lista = trabajadorService.listarTrabajadores();
         return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/{idTrabajador}")
+    public ResponseEntity<TrabajadorResponse> getTrabajador(@PathVariable Integer idTrabajador) {
+        TrabajadorResponse trabajador = trabajadorService.getTrabajador(idTrabajador);
+        return ResponseEntity.ok(trabajador);
     }
 }

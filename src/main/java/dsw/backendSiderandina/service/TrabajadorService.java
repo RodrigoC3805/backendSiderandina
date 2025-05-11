@@ -14,7 +14,7 @@ import dsw.backendSiderandina.repository.TrabajadorRepository;
 import dsw.backendSiderandina.repository.TipoDocumentoRepository;
 import dsw.backendSiderandina.repository.TipoTrabajadorRepository;
 import dsw.backendSiderandina.repository.ContratoRepository;
-
+import jakarta.persistence.EntityNotFoundException;
 @Service
 public class TrabajadorService {
     @Autowired
@@ -43,6 +43,12 @@ public class TrabajadorService {
         trabajador = trabajadorRepository.save(trabajador);
         return TrabajadorResponse.fromEntity(trabajador);
     }
+
+        public TrabajadorResponse getTrabajador(Integer idTrabajador) {
+            Trabajador trabajador = trabajadorRepository.findById(idTrabajador)
+                .orElseThrow(() -> new EntityNotFoundException("Trabajador no encontrado con ID: " + idTrabajador));
+            return TrabajadorResponse.fromEntity(trabajador);
+        }
 
     // Este es el método que tu frontend debe consumir
     public List<TrabajadorListItem> listarTrabajadores() {
