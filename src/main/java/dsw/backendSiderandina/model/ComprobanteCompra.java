@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,8 +33,8 @@ public class ComprobanteCompra {
     @Column(name = "fecha_emision")
     private Timestamp fechaEmision;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="id_pedido_compra", referencedColumnName = "id_pedido_compra")
+    @OneToOne
+    @JoinColumn(name = "id_pedido_compra", unique = true)
     private PedidoCompra pedidoCompra;
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="id_pago", referencedColumnName = "id_pago")

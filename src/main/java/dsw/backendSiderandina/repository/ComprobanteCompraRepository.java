@@ -7,5 +7,6 @@ import dsw.backendSiderandina.model.ComprobanteCompra;
 
 @Repository
 public interface ComprobanteCompraRepository extends JpaRepository<ComprobanteCompra, Integer> {
+    ComprobanteCompra findByPedidoCompra_IdPedidoCompra(Integer idPedidoCompra);
 
 }
