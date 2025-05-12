@@ -27,6 +27,7 @@ public class ProductoService {
             productoRequest.getCostoUnitarioBase(),
             productoRequest.getStock(),
             productoRequest.getStockMin(),
+            productoRequest.getUrlImagen(),
             null, // Assuming CategoriaProducto and UnidadesMedida are set later
             null
         );

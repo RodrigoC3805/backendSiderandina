@@ -15,12 +15,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductoResponse {
     private Integer idProducto;
+    private UnidadesMedidaResponse unidadesMedida; // Respuesta del tipo de unidad de medida
+    private CategoriaProductoResponse categorioProducto; // Respuesta del tipo de categoria de producto
     private Integer sku;
     private String nombre;
     private Double precioVentaBase;
     private Double costoUnitarioBase;
     private Integer stock;
     private Integer stockMin;
+    private String urlImagen;
 
     public static ProductoResponse fromEntity(Producto producto) {
         return ProductoResponse.builder()
@@ -31,6 +34,7 @@ public class ProductoResponse {
                 .costoUnitarioBase(producto.getCostoUnitarioBase())
                 .stock(producto.getStock())
                 .stockMin(producto.getStockMin())
+                .urlImagen(producto.getUrlImagen())
                 .build();
     }
 
