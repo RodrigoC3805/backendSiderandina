@@ -35,6 +35,16 @@ public class ProductoResponse {
                 .stock(producto.getStock())
                 .stockMin(producto.getStockMin())
                 .urlImagen(producto.getUrlImagen())
+                .categorioProducto(
+                producto.getIdCatProd() != null
+                    ? CategoriaProductoResponse.fromEntity(producto.getIdCatProd())
+                    : null
+                )
+                .unidadesMedida(
+                producto.getIdUnidadesMedida() != null
+                    ? UnidadesMedidaResponse.fromEntity(producto.getIdUnidadesMedida())
+                    : null
+                )
                 .build();
     }
 
