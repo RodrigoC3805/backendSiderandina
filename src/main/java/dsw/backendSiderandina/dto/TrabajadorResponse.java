@@ -22,8 +22,22 @@ public class TrabajadorResponse {
     private String apellidoMaterno;
     private String nombres;
     private String emailContacto;
+    private ContratoResponse contrato;
 
-    public static TrabajadorResponse fromEntity(Trabajador trabajador) {
+public static TrabajadorResponse fromEntity(Trabajador trabajador) {
+    return TrabajadorResponse.builder()
+            .idTrabajador(trabajador.getIdTrabajador())
+            .tipoDocumento(TipoDocumentoResponse.fromEntity(trabajador.getTipoDocumento()))
+            .tipoTrabajador(TipoTrabajadorResponse.fromEntity(trabajador.getTipoTrabajador()))
+            .numeroDocumento(trabajador.getNumeroDocumento())
+            .apellidoPaterno(trabajador.getApellidoPaterno())
+            .apellidoMaterno(trabajador.getApellidoMaterno())
+            .nombres(trabajador.getNombres())
+            .emailContacto(trabajador.getEmailContacto())
+            .contrato(null) // O puedes intentar obtener el contrato si lo tienes en la entidad
+            .build();
+    }
+    public static TrabajadorResponse fromEntity(Trabajador trabajador, dsw.backendSiderandina.model.Contrato contrato) {
         return TrabajadorResponse.builder()
                 .idTrabajador(trabajador.getIdTrabajador())
                 .tipoDocumento(TipoDocumentoResponse.fromEntity(trabajador.getTipoDocumento()))
@@ -33,6 +47,7 @@ public class TrabajadorResponse {
                 .apellidoMaterno(trabajador.getApellidoMaterno())
                 .nombres(trabajador.getNombres())
                 .emailContacto(trabajador.getEmailContacto())
+                .contrato(contrato != null ? ContratoResponse.fromEntity(contrato) : null)
                 .build();
     }
 

@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import dsw.backendSiderandina.dto.TrabajadorRequest;
 import dsw.backendSiderandina.dto.TrabajadorResponse;
 import dsw.backendSiderandina.dto.TrabajadorListItem;
+import dsw.backendSiderandina.model.EstadoContrato;
 import dsw.backendSiderandina.model.Trabajador;
 import dsw.backendSiderandina.model.Contrato;
+import dsw.backendSiderandina.repository.EstadoContratoRepository;
 import dsw.backendSiderandina.repository.TrabajadorRepository;
 import dsw.backendSiderandina.repository.TipoDocumentoRepository;
 import dsw.backendSiderandina.repository.TipoTrabajadorRepository;
@@ -29,6 +31,9 @@ public class TrabajadorService {
     @Autowired
     ContratoRepository contratoRepository;
 
+    @Autowired
+    EstadoContratoRepository estadoContratoRepository;
+
     public TrabajadorResponse createTrabajador(TrabajadorRequest trabajadorRequest) {
         Trabajador trabajador = Trabajador.builder()
                 .tipoDocumento(tipoDocumentoRepository.findById(trabajadorRequest.getIdTipoDocumento()).orElse(null))
@@ -41,23 +46,55 @@ public class TrabajadorService {
                 .build();
 
         trabajador = trabajadorRepository.save(trabajador);
+
+        // Crear contrato si se envían los datos
+        if (trabajadorRequest.getFechaInicioContrato() != null && trabajadorRequest.getSueldo() != null) {
+            EstadoContrato estadoContrato = estadoContratoRepository.findById(trabajadorRequest.getIdEstadoContrato()).orElse(null);
+            Contrato contrato = Contrato.builder()
+                .trabajador(trabajador)
+                .estadoContrato(estadoContrato)
+                .fechaInicio(trabajadorRequest.getFechaInicioContrato())
+                .fechaFin(trabajadorRequest.getFechaFinContrato())
+                .remuneracion(trabajadorRequest.getSueldo())
+                .build();
+            contratoRepository.save(contrato);
+        }
+
         return TrabajadorResponse.fromEntity(trabajador);
     }
 
-        public TrabajadorResponse getTrabajador(Integer idTrabajador) {
-            Trabajador trabajador = trabajadorRepository.findById(idTrabajador)
-                .orElseThrow(() -> new EntityNotFoundException("Trabajador no encontrado con ID: " + idTrabajador));
-            return TrabajadorResponse.fromEntity(trabajador);
+    public TrabajadorResponse getTrabajador(Integer idTrabajador) {
+        Trabajador trabajador = trabajadorRepository.findById(idTrabajador)
+            .orElseThrow(() -> new EntityNotFoundException("Trabajador no encontrado con ID: " + idTrabajador));
+        // Busca el contrato más relevante
+        Contrato contrato = contratoRepository.findTopByTrabajadorIdTrabajadorAndEstadoContratoDescripcionOrderByFechaFinDesc(
+            trabajador.getIdTrabajador(), "Activo"
+        );
+        if (contrato == null) {
+            contrato = contratoRepository.findTopByTrabajadorIdTrabajadorOrderByFechaFinDesc(trabajador.getIdTrabajador());
         }
+        return TrabajadorResponse.fromEntity(trabajador, contrato);
+    }
+    
+    public void eliminarTrabajador(Integer idTrabajador) {
+        // Elimina primero los contratos asociados
+        contratoRepository.deleteAll(contratoRepository.findByTrabajadorIdTrabajador(idTrabajador));
+        // Luego elimina el trabajador
+        trabajadorRepository.deleteById(idTrabajador);
+    }
 
     // Este es el método que tu frontend debe consumir
     public List<TrabajadorListItem> listarTrabajadores() {
         return trabajadorRepository.findAll().stream()
             .map(trabajador -> {
-                // Busca el contrato activo del trabajador
-                Contrato contrato = contratoRepository.findFirstByTrabajadorIdTrabajadorAndEstadoContratoDescripcion(
+                // Busca el contrato "Activo"
+                Contrato contrato = contratoRepository.findTopByTrabajadorIdTrabajadorAndEstadoContratoDescripcionOrderByFechaFinDesc(
                     trabajador.getIdTrabajador(), "Activo"
                 );
+                // Si no hay contrato "Activo", busca el más reciente
+                if (contrato == null) {
+                    contrato = contratoRepository.findTopByTrabajadorIdTrabajadorOrderByFechaFinDesc(trabajador.getIdTrabajador());
+                }
                 Double sueldo = contrato != null && contrato.getRemuneracion() != null ? contrato.getRemuneracion() : 0.0;
                 String moneda = "Soles"; // Cambia si tienes el campo en tu modelo
                 String estadoContrato = contrato != null && contrato.getEstadoContrato() != null
@@ -76,5 +113,33 @@ public class TrabajadorService {
                 );
             })
             .toList();
+    }
+    public TrabajadorResponse updateTrabajador(Integer idTrabajador, TrabajadorRequest request) {
+        Trabajador trabajador = trabajadorRepository.findById(idTrabajador)
+            .orElseThrow(() -> new EntityNotFoundException("Trabajador no encontrado con ID: " + idTrabajador));
+
+        trabajador.setTipoDocumento(tipoDocumentoRepository.findById(request.getIdTipoDocumento()).orElse(null));
+        trabajador.setTipoTrabajador(tipoTrabajadorRepository.findById(request.getIdTipoTrabajador()).orElse(null));
+        trabajador.setNumeroDocumento(request.getNumeroDocumento());
+        trabajador.setApellidoPaterno(request.getApellidoPaterno());
+        trabajador.setApellidoMaterno(request.getApellidoMaterno());
+        trabajador.setNombres(request.getNombres());
+        trabajador.setEmailContacto(request.getEmailContacto());
+
+        trabajador = trabajadorRepository.save(trabajador);
+
+        // Actualiza o crea el contrato
+        Contrato contrato = contratoRepository.findTopByTrabajadorIdTrabajadorOrderByFechaFinDesc(idTrabajador);
+        if (contrato == null) {
+            contrato = new Contrato();
+            contrato.setTrabajador(trabajador);
+        }
+        contrato.setFechaInicio(request.getFechaInicioContrato());
+        contrato.setFechaFin(request.getFechaFinContrato());
+        contrato.setRemuneracion(request.getSueldo());
+        contrato.setEstadoContrato(estadoContratoRepository.findById(request.getIdEstadoContrato()).orElse(null));
+        contratoRepository.save(contrato);
+
+        return TrabajadorResponse.fromEntity(trabajador, contrato);
     }
 }

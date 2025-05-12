@@ -8,5 +8,6 @@ import java.util.List;
 @Repository
 public interface ContratoRepository extends JpaRepository<Contrato, Integer> {
     List<Contrato> findByTrabajadorIdTrabajador(Integer idTrabajador);
-    Contrato findFirstByTrabajadorIdTrabajadorAndEstadoContratoDescripcion(Integer idTrabajador, String descripcion);
+    Contrato findTopByTrabajadorIdTrabajadorAndEstadoContratoDescripcionOrderByFechaFinDesc(Integer idTrabajador, String descripcion);
+    Contrato findTopByTrabajadorIdTrabajadorOrderByFechaFinDesc(Integer idTrabajador);
 }

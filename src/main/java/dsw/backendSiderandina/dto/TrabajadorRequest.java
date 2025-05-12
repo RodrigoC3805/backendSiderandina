@@ -1,5 +1,6 @@
 package dsw.backendSiderandina.dto;
 
+import java.sql.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,11 +12,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TrabajadorRequest {
     private Integer idTrabajador;
-    private Integer idTipoDocumento; // ID del tipo de documento
-    private Integer idTipoTrabajador; // ID del tipo de trabajador
+    private Integer idTipoDocumento;
+    private Integer idTipoTrabajador;
     private String numeroDocumento;
     private String apellidoPaterno;
     private String apellidoMaterno;
     private String nombres;
     private String emailContacto;
+    private Date fechaInicioContrato;
+    private Date fechaFinContrato;
+    private Double sueldo;
+    private Integer idEstadoContrato; 
 }

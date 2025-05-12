@@ -1,6 +1,6 @@
 package dsw.backendSiderandina.model;
 
-import java.sql.Date; // Para campos de tipo DATE SQL
+import java.sql.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -42,6 +42,5 @@ public class Contrato {
     private Date fechaFin;
 
     @Column(name="remuneracion")
-    private Double remuneracion; // numeric(12,2)
+    private Double remuneracion;
 }
-
