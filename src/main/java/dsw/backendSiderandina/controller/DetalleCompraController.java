@@ -39,4 +39,15 @@ public class DetalleCompraController {
         return ResponseEntity.ok(listaDetalleCompra);
     }
     
+    @PostMapping
+    public ResponseEntity<?> createDetallesCompra(@RequestBody List<DetalleCompra> detallesCompra) {
+        try {
+            List<DetalleCompra> savedDetalles = detalleCompraRepository.saveAll(detallesCompra);
+            return ResponseEntity.ok(savedDetalles);
+        } catch (Exception e) {
+            logger.error("Error al crear detalles de compra", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ErrorResponse.builder().message("Error al crear detalles de compra").build());
+        }
+    }
 }

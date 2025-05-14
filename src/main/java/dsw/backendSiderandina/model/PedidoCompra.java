@@ -26,7 +26,7 @@ public class PedidoCompra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_pedido_compra")
     private Integer idPedidoCompra;
-    @Column(name="codigo_compra")
+    @Column(name = "codigo_compra", nullable = false, updatable = false, insertable = false)
     private Integer codigoCompra;
     @Column(name="fecha_pedido")
     private Timestamp fechaPedido;
@@ -34,10 +34,10 @@ public class PedidoCompra {
     private Double montoTotal;
     
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="id_proveedor", referencedColumnName = "id_proveedor")
+    @JoinColumn(name="id_proveedor", referencedColumnName = "id_proveedor", nullable = false)
     private Proveedor proveedor;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_estado_pedido", referencedColumnName = "id_estado_pedido")
+    @JoinColumn(name = "id_estado_pedido", referencedColumnName = "id_estado_pedido", nullable = false)
     private EstadoPedido estadoPedido;
 
 }
