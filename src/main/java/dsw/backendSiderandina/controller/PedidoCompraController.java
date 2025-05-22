@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dsw.backendSiderandina.dto.ComprobanteCompraRequest;
+import dsw.backendSiderandina.dto.ComprobanteCompraResponse;
 import dsw.backendSiderandina.dto.PedidoCompraRequest;
 import dsw.backendSiderandina.dto.PedidoCompraResponse;
 import dsw.backendSiderandina.dto.PedidoYDetallesDTO;
@@ -65,7 +67,7 @@ public class PedidoCompraController {
             PedidoCompra pedido = pedidoYDetallesDTO.getPedidoCompra();
             List<DetalleCompra> detalles = pedidoYDetallesDTO.getDetallesCompra();
             Pago pago = pedidoYDetallesDTO.getPago();
-            ComprobanteCompra comprobante = pedidoYDetallesDTO.getComprobanteCompra();
+            ComprobanteCompraRequest comprobante = pedidoYDetallesDTO.getComprobanteCompraRequest();
 
             PedidoCompra savedPedido = pedidoCompraService.createPedidoCompraConDetalles(
                     pedido, detalles, pago, comprobante);

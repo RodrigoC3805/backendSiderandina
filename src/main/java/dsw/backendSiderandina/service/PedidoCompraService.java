@@ -3,11 +3,11 @@ package dsw.backendSiderandina.service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dsw.backendSiderandina.dto.ComprobanteCompraRequest;
 import dsw.backendSiderandina.dto.PedidoCompraRequest;
 import dsw.backendSiderandina.dto.PedidoCompraResponse;
 import dsw.backendSiderandina.model.ComprobanteCompra;
@@ -16,12 +16,14 @@ import dsw.backendSiderandina.model.EstadoPedido;
 import dsw.backendSiderandina.model.Pago;
 import dsw.backendSiderandina.model.PedidoCompra;
 import dsw.backendSiderandina.model.Proveedor;
+import dsw.backendSiderandina.model.TipoComprobante;
 import dsw.backendSiderandina.repository.ComprobanteCompraRepository;
 import dsw.backendSiderandina.repository.DetalleCompraRepository;
 import dsw.backendSiderandina.repository.EstadoPedidoRepository;
 import dsw.backendSiderandina.repository.PagoRepository;
 import dsw.backendSiderandina.repository.PedidoCompraRepository;
 import dsw.backendSiderandina.repository.ProveedorRepository;
+import dsw.backendSiderandina.repository.TipoComprobanteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -39,6 +41,8 @@ public class PedidoCompraService {
     ComprobanteCompraRepository comprobanteCompraRepository;
     @Autowired
     PagoRepository pagoRepository;
+    @Autowired
+    TipoComprobanteRepository tipoComprobanteRepository;
 
     public List<PedidoCompraResponse> listPedidosCompra() {
         return PedidoCompraResponse.fromEntities(pedidoCompraRepository.findAll());
@@ -59,7 +63,10 @@ public class PedidoCompraService {
 
     @Transactional
     public PedidoCompra createPedidoCompraConDetalles(PedidoCompra pedidoCompra, List<DetalleCompra> detallesCompra,
-            Pago pago, ComprobanteCompra comprobanteCompra) {
+        Pago pago, ComprobanteCompraRequest comprobanteCompraRequest) {
+        //Colocar hora actual
+        pedidoCompra.setFechaPedido(Timestamp.from(Instant.now()));
+        comprobanteCompraRequest.setFechaEmision(Timestamp.from(Instant.now()));
         // 1. Validar y asociar EstadoPedido
         if (pedidoCompra.getEstadoPedido() == null || pedidoCompra.getEstadoPedido().getIdEstadoPedido() == null) {
             throw new RuntimeException("El objeto EstadoPedido o su ID no pueden ser nulos.");
@@ -95,11 +102,19 @@ public class PedidoCompraService {
         }
 
         // 6. Guardar el ComprobanteCompra (si existe)
-        if (comprobanteCompra != null) {
-            comprobanteCompra.setPedidoCompra(savedPedido); // Asociar el pedido al comprobante
+        if (comprobanteCompraRequest != null) {
+            TipoComprobante tipoComprobante = tipoComprobanteRepository.findById(1).get();
+            comprobanteCompraRequest.setIdPedidoCompra(savedPedido.getIdPedidoCompra()); // Asociar el pedido al comprobante
+            ComprobanteCompra comprobanteCompra = new ComprobanteCompra(
+                comprobanteCompraRequest.getIdComprobanteCompra(),
+                comprobanteCompraRequest.getNumeroComprobante(),    
+                comprobanteCompraRequest.getFechaEmision(),
+                pedidoCompra,
+                pago,
+                tipoComprobante
+            );
             comprobanteCompraRepository.save(comprobanteCompra);
         }
-
         return savedPedido;
     }
 }

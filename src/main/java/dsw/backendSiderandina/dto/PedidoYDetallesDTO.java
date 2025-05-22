@@ -19,6 +19,6 @@ import lombok.NoArgsConstructor;
 public class PedidoYDetallesDTO {
     private PedidoCompra pedidoCompra; // Información del pedido principal
     private List<DetalleCompra> detallesCompra; // Lista de detalles asociados al pedido
-    private ComprobanteCompra comprobanteCompra; // Información del comprobante de compra
+    private ComprobanteCompraRequest comprobanteCompraRequest; // Información del comprobante de compra
     private Pago pago; // Información del pago asociado al pedido
 }
