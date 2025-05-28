@@ -14,7 +14,7 @@ import java.util.List;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestController
-@RequestMapping(path="api/v1/contrato")
+@RequestMapping(path="api/rrhh")
 public class ContratoController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
