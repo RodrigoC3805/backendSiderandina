@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping(path="api/v1/pedidocompra")
+@RequestMapping(path="api/almacen/pedidocompra")
 public class PedidoCompraController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired

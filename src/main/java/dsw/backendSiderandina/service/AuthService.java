@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import dsw.backendSiderandina.dto.AuthResponse;
 import dsw.backendSiderandina.dto.LoginRequest;
 import dsw.backendSiderandina.dto.RegisterRequest;
+import dsw.backendSiderandina.model.Usuario;
 import dsw.backendSiderandina.repository.ClienteRepository;
 import dsw.backendSiderandina.repository.UsuarioRepository;
 import dsw.backendSiderandina.utils.JwtUtil;
@@ -35,6 +36,19 @@ public class AuthService {
         clienteRepository.save(request.getCliente());
 
         String jwtToken = jwtService.generateToken(request.getUsuario());
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+    
+    public AuthResponse registerWorker(Usuario usuario) {
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese email");
+        }
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        usuarioRepository.save(usuario);
+
+        String jwtToken = jwtService.generateToken(usuario);
         return AuthResponse.builder()
                 .token(jwtToken)
                 .build();

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/trabajador")
+@RequestMapping("/api/rrhh/trabajador")
 public class TrabajadorController {
 
     @Autowired

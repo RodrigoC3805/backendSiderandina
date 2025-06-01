@@ -9,7 +9,7 @@ import dsw.backendSiderandina.dto.CotizacionResponse;
 import dsw.backendSiderandina.service.CotizacionService;
 
 @RestController
-@RequestMapping(path = "api/v1/cotizacion")
+@RequestMapping(path = "api/cliente/cotizacion")
 public class CotizacionController {
     @Autowired
     CotizacionService cotizacionService;

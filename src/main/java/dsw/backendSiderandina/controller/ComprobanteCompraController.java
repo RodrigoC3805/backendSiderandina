@@ -17,7 +17,7 @@ import dsw.backendSiderandina.repository.ComprobanteCompraRepository;
 import dsw.backendSiderandina.utils.ErrorResponse;
 
 @RestController
-@RequestMapping(path="api/v1/comprobantecompra")
+@RequestMapping(path="api/almacen/comprobantecompra")
 public class ComprobanteCompraController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired

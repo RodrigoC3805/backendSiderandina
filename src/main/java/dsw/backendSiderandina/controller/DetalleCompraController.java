@@ -18,7 +18,7 @@ import dsw.backendSiderandina.repository.DetalleCompraRepository;
 import dsw.backendSiderandina.utils.ErrorResponse;
 
 @RestController
-@RequestMapping(path="api/v1/detallecompra")
+@RequestMapping(path="api/almacen/detallecompra")
 public class DetalleCompraController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
