@@ -28,7 +28,6 @@ public class SecurityConfig {
                  .cors()
                  .and()
                  .csrf().disable()
-                 .cors().and()
                  .authorizeHttpRequests()
                  .requestMatchers("/api/admin/**").hasRole("GERENTE_GENERAL")
                  .requestMatchers("/api/rrhh/**").hasRole("ADMIN_RRHH")
