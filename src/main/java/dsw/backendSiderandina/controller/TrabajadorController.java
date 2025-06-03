@@ -3,12 +3,16 @@ package dsw.backendSiderandina.controller;
 import dsw.backendSiderandina.dto.TrabajadorListItem;
 import dsw.backendSiderandina.dto.TrabajadorRequest;
 import dsw.backendSiderandina.dto.TrabajadorResponse;
+import dsw.backendSiderandina.model.Trabajador;
+import dsw.backendSiderandina.repository.TrabajadorRepository;
 import dsw.backendSiderandina.service.TrabajadorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/rrhh/trabajador")
@@ -16,6 +20,9 @@ public class TrabajadorController {
 
     @Autowired
     private TrabajadorService trabajadorService;
+
+    @Autowired
+    private TrabajadorRepository trabajadorRepository; 
 
     @PostMapping
     public ResponseEntity<TrabajadorResponse> crearTrabajador(@RequestBody TrabajadorRequest request) {
@@ -47,5 +54,15 @@ public class TrabajadorController {
     public ResponseEntity<Void> eliminarTrabajador(@PathVariable Integer idTrabajador) {
         trabajadorService.eliminarTrabajador(idTrabajador);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<?> buscarPorNumeroDocumento(@RequestParam String numeroDocumento) {
+        Optional<Trabajador> trabajadorOpt = trabajadorRepository.findByNumeroDocumento(numeroDocumento);
+        if (trabajadorOpt.isPresent()) {
+            return ResponseEntity.ok(TrabajadorResponse.fromEntity(trabajadorOpt.get()));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
+        }
     }
 }
