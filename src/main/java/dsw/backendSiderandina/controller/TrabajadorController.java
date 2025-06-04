@@ -68,17 +68,5 @@ public class TrabajadorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
         }
     }
-    @GetMapping("/findbyuseremail")
-    public ResponseEntity<?> findByUserEmail(@RequestParam String email) {
-        Optional<Trabajador> trabajador = null;
-        try {
-            trabajador = trabajadorService.findByUsuarioEmail(email);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        if (trabajador.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ErrorResponse.builder().message("Trabajador not found").build());
-        return ResponseEntity.ok(trabajador.get());
-    }
+
 }

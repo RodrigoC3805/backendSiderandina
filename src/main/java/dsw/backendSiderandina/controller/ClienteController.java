@@ -24,7 +24,7 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    @GetMapping("/findbyuseremail")
+    @GetMapping("/findclientebyuseremail")
     public ResponseEntity<?> findByUserEmail(@RequestParam String email) {
         Optional<Cliente> cliente = null;
         try {
