@@ -1,6 +1,7 @@
 package dsw.backendSiderandina.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import dsw.backendSiderandina.dto.TrabajadorResponse;
 import dsw.backendSiderandina.dto.TrabajadorListItem;
 import dsw.backendSiderandina.model.EstadoContrato;
 import dsw.backendSiderandina.model.Trabajador;
+import dsw.backendSiderandina.model.Cliente;
 import dsw.backendSiderandina.model.Contrato;
 import dsw.backendSiderandina.repository.EstadoContratoRepository;
 import dsw.backendSiderandina.repository.TrabajadorRepository;
@@ -114,9 +116,10 @@ public class TrabajadorService {
             })
             .toList();
     }
+
     public TrabajadorResponse updateTrabajador(Integer idTrabajador, TrabajadorRequest request) {
         Trabajador trabajador = trabajadorRepository.findById(idTrabajador)
-            .orElseThrow(() -> new EntityNotFoundException("Trabajador no encontrado con ID: " + idTrabajador));
+                .orElseThrow(() -> new EntityNotFoundException("Trabajador no encontrado con ID: " + idTrabajador));
 
         trabajador.setTipoDocumento(tipoDocumentoRepository.findById(request.getIdTipoDocumento()).orElse(null));
         trabajador.setTipoTrabajador(tipoTrabajadorRepository.findById(request.getIdTipoTrabajador()).orElse(null));
@@ -142,4 +145,8 @@ public class TrabajadorService {
 
         return TrabajadorResponse.fromEntity(trabajador, contrato);
     }
+    public Optional<Trabajador> findByUsuarioEmail(String email) {
+        return trabajadorRepository.findByUsuarioEmail(email);
+    }
+    
 }

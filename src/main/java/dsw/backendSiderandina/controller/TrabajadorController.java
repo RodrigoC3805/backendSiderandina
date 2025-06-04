@@ -3,9 +3,12 @@ package dsw.backendSiderandina.controller;
 import dsw.backendSiderandina.dto.TrabajadorListItem;
 import dsw.backendSiderandina.dto.TrabajadorRequest;
 import dsw.backendSiderandina.dto.TrabajadorResponse;
+import dsw.backendSiderandina.model.Cliente;
 import dsw.backendSiderandina.model.Trabajador;
 import dsw.backendSiderandina.repository.TrabajadorRepository;
 import dsw.backendSiderandina.service.TrabajadorService;
+import dsw.backendSiderandina.utils.ErrorResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,4 +68,5 @@ public class TrabajadorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
         }
     }
+
 }

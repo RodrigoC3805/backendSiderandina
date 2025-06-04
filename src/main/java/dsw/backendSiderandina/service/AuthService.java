@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 import dsw.backendSiderandina.dto.AuthResponse;
 import dsw.backendSiderandina.dto.LoginRequest;
 import dsw.backendSiderandina.dto.RegisterRequest;
-import dsw.backendSiderandina.model.Usuario;
+import dsw.backendSiderandina.dto.RegisterWorkerRequest;
 import dsw.backendSiderandina.repository.ClienteRepository;
+import dsw.backendSiderandina.repository.TrabajadorRepository;
 import dsw.backendSiderandina.repository.UsuarioRepository;
 import dsw.backendSiderandina.utils.JwtUtil;
 import jakarta.transaction.Transactional;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final ClienteRepository clienteRepository;
+    private final TrabajadorRepository trabajadorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtService;
     
@@ -31,8 +33,10 @@ public class AuthService {
             throw new IllegalArgumentException("Ya existe un usuario con ese email");
         }
         request.getUsuario().setPassword(passwordEncoder.encode(request.getUsuario().getPassword()));
+        request.getUsuario().getTipoUsuario().setIdTipoUsuario(7);
         usuarioRepository.save(request.getUsuario());
         request.getCliente().setUsuario(request.getUsuario());
+        request.getCliente().getTipoCliente().setIdTipoCliente(1);;
         clienteRepository.save(request.getCliente());
 
         String jwtToken = jwtService.generateToken(request.getUsuario());
@@ -40,15 +44,21 @@ public class AuthService {
                 .token(jwtToken)
                 .build();
     }
-    
-    public AuthResponse registerWorker(Usuario usuario) {
-        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+    @Transactional
+    public AuthResponse registerWorker(RegisterWorkerRequest request) {
+        if (trabajadorRepository.existsByNumeroDocumento(request.getTrabajador().getNumeroDocumento()))
+            throw new IllegalArgumentException("Ya existe un trabajador con ese número de documento");
+        if (usuarioRepository.existsByEmail(request.getUsuario().getEmail())) {
             throw new IllegalArgumentException("Ya existe un usuario con ese email");
         }
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuarioRepository.save(usuario);
-
-        String jwtToken = jwtService.generateToken(usuario);
+        if (request.getUsuario().getPassword() == null) {
+            throw new IllegalArgumentException("La contraseña no puede ser nula");
+        }
+        request.getUsuario().setPassword(passwordEncoder.encode(request.getUsuario().getPassword()));
+        usuarioRepository.save(request.getUsuario());
+        request.getTrabajador().setUsuario(request.getUsuario());
+        trabajadorRepository.save(request.getTrabajador());
+        String jwtToken = jwtService.generateToken(request.getUsuario());
         return AuthResponse.builder()
                 .token(jwtToken)
                 .build();

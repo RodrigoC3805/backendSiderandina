@@ -11,4 +11,6 @@ import dsw.backendSiderandina.model.Trabajador;
 @Repository
 public interface TrabajadorRepository extends JpaRepository<Trabajador, Integer> {
     Optional<Trabajador> findByNumeroDocumento(String numeroDocumento);
+    boolean existsByNumeroDocumento(String numeroDocumento);
+    Optional<Trabajador> findByUsuarioEmail(String numeroDocumento);
 }
