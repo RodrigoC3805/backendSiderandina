@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dsw.backendSiderandina.dto.AuthResponse;
 import dsw.backendSiderandina.dto.LoginRequest;
 import dsw.backendSiderandina.dto.RegisterRequest;
+import dsw.backendSiderandina.dto.RegisterWorkerRequest;
 import dsw.backendSiderandina.model.Usuario;
 import dsw.backendSiderandina.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +36,9 @@ public class AuthController {
     }
     
     @PostMapping("/registerworker")
-    public ResponseEntity<AuthResponse> registerWorker(@RequestBody Usuario usuario) {
-        logger.info(">register: " + usuario);
-        return ResponseEntity.ok(authService.registerWorker(usuario));
+    public ResponseEntity<AuthResponse> registerWorker(@RequestBody RegisterWorkerRequest request) {
+        logger.info(">register: " + request);
+        return ResponseEntity.ok(authService.registerWorker(request));
     }
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {

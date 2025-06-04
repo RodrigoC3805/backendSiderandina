@@ -47,4 +47,8 @@ public class Trabajador {
 
     @Column(name="email_contacto")
     private String emailContacto;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+    private Usuario usuario;
 }
