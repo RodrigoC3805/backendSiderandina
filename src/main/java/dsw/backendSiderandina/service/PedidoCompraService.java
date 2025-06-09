@@ -117,4 +117,35 @@ public class PedidoCompraService {
         }
         return savedPedido;
     }
+
+    public List<PedidoCompraResponse> getPedidosByProveedor(Integer idProveedor) {
+        return PedidoCompraResponse.fromEntities(
+            pedidoCompraRepository.findByProveedor_IdProveedorOrderByFechaPedidoDesc(idProveedor)
+        );
+    }
+
+    public List<PedidoCompraResponse> getPedidosByProveedorAndEstado(Integer idProveedor, Integer idEstadoPedido) {
+        return PedidoCompraResponse.fromEntities(
+            pedidoCompraRepository.findByProveedor_IdProveedorAndEstadoPedido_IdEstadoPedido(idProveedor, idEstadoPedido)
+        );
+    }
+
+    @Transactional
+    public PedidoCompraResponse actualizarEstadoPedido(Integer idPedidoCompra, Integer idEstadoPedido) {
+        PedidoCompra pedido = pedidoCompraRepository.findById(idPedidoCompra)
+            .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        EstadoPedido estado = estadoPedidoRepository.findById(idEstadoPedido)
+            .orElseThrow(() -> new RuntimeException("Estado de pedido no encontrado"));
+        pedido.setEstadoPedido(estado);
+        pedido = pedidoCompraRepository.save(pedido);
+        return PedidoCompraResponse.fromEntity(pedido);
+    }
+
+    public List<PedidoCompraResponse> listPedidosCompraByEstado(Integer idEstadoPedido) {
+        return PedidoCompraResponse.fromEntities(
+            pedidoCompraRepository.findAll().stream()
+                .filter(p -> p.getEstadoPedido().getIdEstadoPedido().equals(idEstadoPedido))
+                .toList()
+        );
+    }
 }

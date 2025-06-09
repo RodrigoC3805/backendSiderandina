@@ -21,10 +21,13 @@ import dsw.backendSiderandina.model.Pago;
 import dsw.backendSiderandina.model.PedidoCompra;
 import dsw.backendSiderandina.service.PedidoCompraService;
 import dsw.backendSiderandina.utils.ErrorResponse;
+import dsw.backendSiderandina.dto.ActualizarEstadoPedidoRequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -35,18 +38,14 @@ public class PedidoCompraController {
     PedidoCompraService pedidoCompraService;
 
     @GetMapping
-    public ResponseEntity<?> getPedidosCompra() {
-        List<PedidoCompraResponse> listaPedidoCompraResponse = null;
-        try {
+    public ResponseEntity<?> getPedidosCompra(@RequestParam(required = false) Integer idEstadoPedido) {
+        List<PedidoCompraResponse> listaPedidoCompraResponse;
+        if (idEstadoPedido != null) {
+            listaPedidoCompraResponse = pedidoCompraService.listPedidosCompraByEstado(idEstadoPedido);
+        } else {
             listaPedidoCompraResponse = pedidoCompraService.listPedidosCompra();
-        } catch (Exception e) {
-            logger.error("Error inesperado", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if (listaPedidoCompraResponse.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ErrorResponse.builder().message("PedidoCompra not found").build());
-        return ResponseEntity.ok(listaPedidoCompraResponse);
+        return ResponseEntity.ok(listaPedidoCompraResponse == null ? List.of() : listaPedidoCompraResponse);
     }
     @PostMapping
     public ResponseEntity<?> createPedidoCompra(@RequestBody PedidoCompraRequest pedidoCompraRequest) {
@@ -76,6 +75,37 @@ public class PedidoCompraController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al crear el pedido con sus detalles: " + e.getMessage());
+        }
+    }
+
+    // Consultar pedidos por proveedor (con filtros)
+    @GetMapping("/proveedor")
+    public ResponseEntity<?> getPedidosByProveedor(
+            @RequestParam Integer idProveedor,
+            @RequestParam(required = false) Integer idEstadoPedido) {
+        try {
+            List<PedidoCompraResponse> pedidos;
+            if (idEstadoPedido != null) {
+                pedidos = pedidoCompraService.getPedidosByProveedorAndEstado(idProveedor, idEstadoPedido);
+            } else {
+                pedidos = pedidoCompraService.getPedidosByProveedor(idProveedor);
+            }
+            return ResponseEntity.ok(pedidos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al consultar pedidos: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/actualizar-estado")
+    public ResponseEntity<?> actualizarEstadoPedido(@RequestBody ActualizarEstadoPedidoRequest request) {
+        try {
+            PedidoCompraResponse response = pedidoCompraService.actualizarEstadoPedido(
+                request.getIdPedidoCompra(), request.getIdEstadoPedido());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar estado: " + e.getMessage());
         }
     }
 }

@@ -22,34 +22,26 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-     @Bean
-     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-         http
-                 .cors()
-                 .and()
-                 .csrf().disable()
-                 .authorizeHttpRequests()
-                 .requestMatchers("/api/admin/**").hasRole("GERENTE_GENERAL")
-                 .requestMatchers("/api/rrhh/**").hasRole("ADMIN_RRHH")
-                 .requestMatchers("/api/almacen/**").hasRole("JEFE_ALMACEN")
-                 .requestMatchers("/api/ventas/**").hasRole("VENDEDOR")
-                 .requestMatchers("/api/trabajador/**").hasRole("TRABAJADOR")
-                 .requestMatchers("/api/proveedor/**").hasAnyRole("PROVEEDOR", "ALMACEN")
-                 .requestMatchers("/api/cliente/**").hasAnyRole("CLIENTE", "VENDEDOR")
-                 .anyRequest().permitAll()
-                 .and()
-                 .sessionManagement()
-                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                 .and()
-                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .cors()
+            .and()
+            .csrf().disable()
+            .authorizeHttpRequests()
+                .anyRequest().permitAll() // Permite TODO sin autenticación
+            .and()
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-         return http.build();
-     }
+        return http.build();
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
