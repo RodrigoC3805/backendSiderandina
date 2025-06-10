@@ -3,6 +3,9 @@ package dsw.backendSiderandina.controller;
 import dsw.backendSiderandina.dto.AsistenciaRequest;
 import dsw.backendSiderandina.model.AsistenciaDiaria;
 import dsw.backendSiderandina.service.AsistenciaService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,4 +30,10 @@ public class AsistenciaController {
     public ResponseEntity<?> listarAsistencias() {
         return ResponseEntity.ok(asistenciaService.listarAsistencias());
     }
+
+    @GetMapping("/por-documento")
+    public ResponseEntity<?> listarAsistenciasPorDocumento(@RequestParam String numeroDocumento) {
+        List<AsistenciaDiaria> asistencias = asistenciaService.listarAsistenciasPorDocumento(numeroDocumento);
+        return ResponseEntity.ok(asistencias);
+}
 }

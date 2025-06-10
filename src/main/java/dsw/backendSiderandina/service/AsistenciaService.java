@@ -42,5 +42,11 @@ public class AsistenciaService {
     public List<AsistenciaDiaria> listarAsistencias() {
     return asistenciaRepo.findAll();
     }
+
+    public List<AsistenciaDiaria> listarAsistenciasPorDocumento(String numeroDocumento) {
+        Trabajador trabajador = trabajadorRepo.findByNumeroDocumento(numeroDocumento)
+            .orElseThrow(() -> new RuntimeException("Trabajador no encontrado"));
+        return asistenciaRepo.findByTrabajador(trabajador);
+}
    
 }

@@ -4,6 +4,7 @@ import dsw.backendSiderandina.model.AsistenciaDiaria;
 import dsw.backendSiderandina.model.Trabajador;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AsistenciaDiariaRepository extends JpaRepository<AsistenciaDiaria, Integer> {
     // Busca la asistencia de un trabajador en una fecha específica
     Optional<AsistenciaDiaria> findByTrabajadorAndFecha(Trabajador trabajador, LocalDate fecha);
+    List<AsistenciaDiaria> findByTrabajador(Trabajador trabajador);
 }
