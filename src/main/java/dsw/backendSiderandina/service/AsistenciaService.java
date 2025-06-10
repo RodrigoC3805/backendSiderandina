@@ -5,6 +5,9 @@ import dsw.backendSiderandina.model.AsistenciaDiaria;
 import dsw.backendSiderandina.model.Trabajador;
 import dsw.backendSiderandina.repository.AsistenciaDiariaRepository;
 import dsw.backendSiderandina.repository.TrabajadorRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,4 +38,9 @@ public class AsistenciaService {
         asistencia.setHoraSalida(req.getHoraSalida());
         return asistenciaRepo.save(asistencia);
     }
+
+    public List<AsistenciaDiaria> listarAsistencias() {
+    return asistenciaRepo.findAll();
+    }
+   
 }

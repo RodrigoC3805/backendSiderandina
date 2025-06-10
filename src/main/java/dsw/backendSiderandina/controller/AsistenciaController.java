@@ -4,6 +4,7 @@ import dsw.backendSiderandina.dto.AsistenciaRequest;
 import dsw.backendSiderandina.model.AsistenciaDiaria;
 import dsw.backendSiderandina.service.AsistenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,5 +21,10 @@ public class AsistenciaController {
     @PostMapping("/salida")
     public AsistenciaDiaria registrarSalida(@RequestBody AsistenciaRequest req) {
         return asistenciaService.registrarAsistenciaSalida(req);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listarAsistencias() {
+        return ResponseEntity.ok(asistenciaService.listarAsistencias());
     }
 }
