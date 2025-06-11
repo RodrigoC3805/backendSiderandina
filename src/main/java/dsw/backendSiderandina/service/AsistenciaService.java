@@ -5,11 +5,19 @@ import dsw.backendSiderandina.model.AsistenciaDiaria;
 import dsw.backendSiderandina.model.Trabajador;
 import dsw.backendSiderandina.repository.AsistenciaDiariaRepository;
 import dsw.backendSiderandina.repository.TrabajadorRepository;
+import jakarta.servlet.ServletOutputStream;
 
 import java.util.List;
+import jakarta.servlet.ServletOutputStream;
+import java.io.IOException;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Service
 public class AsistenciaService {
@@ -40,13 +48,42 @@ public class AsistenciaService {
     }
 
     public List<AsistenciaDiaria> listarAsistencias() {
-    return asistenciaRepo.findAll();
+        return asistenciaRepo.findAll();
     }
 
     public List<AsistenciaDiaria> listarAsistenciasPorDocumento(String numeroDocumento) {
         Trabajador trabajador = trabajadorRepo.findByNumeroDocumento(numeroDocumento)
             .orElseThrow(() -> new RuntimeException("Trabajador no encontrado"));
         return asistenciaRepo.findByTrabajador(trabajador);
-}
+    }
+
+    public void exportarAsistenciasExcel(ServletOutputStream outputStream) throws IOException {
+        List<AsistenciaDiaria> asistencias = asistenciaRepo.findAll();
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Asistencias");
+            Row header = sheet.createRow(0);
+            header.createCell(0).setCellValue("Nombre");
+            header.createCell(1).setCellValue("N° Documento");
+            header.createCell(2).setCellValue("Cargo");
+            header.createCell(3).setCellValue("Fecha");
+            header.createCell(4).setCellValue("Hora Entrada");
+            header.createCell(5).setCellValue("Hora Salida");
+
+            int rowIdx = 1;
+            for (AsistenciaDiaria a : asistencias) {
+                Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(a.getTrabajador().getNombres() + " " +
+                                                      a.getTrabajador().getApellidoPaterno() + " " +
+                                                      a.getTrabajador().getApellidoMaterno());
+                row.createCell(1).setCellValue(a.getTrabajador().getNumeroDocumento());
+                row.createCell(2).setCellValue(a.getTrabajador().getTipoTrabajador() != null
+                ? a.getTrabajador().getTipoTrabajador().getDescripcion() : "-");
+                row.createCell(3).setCellValue(a.getFecha() != null ? a.getFecha().toString() : "");
+                row.createCell(4).setCellValue(a.getHoraIngreso() != null ? a.getHoraIngreso().toString() : "");
+                row.createCell(5).setCellValue(a.getHoraSalida() != null ? a.getHoraSalida().toString() : "");
+            }
+            workbook.write(outputStream);
+        }
+    }
    
 }
