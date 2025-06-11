@@ -27,7 +27,7 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("idUsuario", usuario.getIdUsuario());
         claims.put("email", usuario.getEmail());
-        claims.put("tipoUsuario", usuario.getTipoUsuario().getIdTipoUsuario());
+        claims.put("tipoUsuario", usuario.getTipoUsuario().getDescripcion());
 
         return Jwts.builder()
                 .setClaims(claims)
