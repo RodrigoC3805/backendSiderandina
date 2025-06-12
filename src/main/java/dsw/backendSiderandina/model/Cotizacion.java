@@ -39,8 +39,9 @@ public class Cotizacion {
     @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente")
     private Cliente cliente;
 
-    @Column(name = "id_estado_cot")
-    private Integer idEstadoCot;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_estado_cot", referencedColumnName = "id_estado_cot")
+    private EstadoCotizacion estadoCotizacion;
 
     @OneToMany(mappedBy = "cotizacion", cascade = CascadeType.ALL)
     private List<DetalleCotizacion> detalles;
