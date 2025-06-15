@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import dsw.backendSiderandina.model.Cliente;
 import dsw.backendSiderandina.model.Cotizacion;
-import dsw.backendSiderandina.model.DetalleCotizacion;
 import dsw.backendSiderandina.model.EstadoCotizacion;
 import lombok.*;
 
@@ -37,6 +36,7 @@ public class CotizacionResponse {
                 .descuento(cotizacion.getDescuento())
                 .cliente(cotizacion.getCliente())
                 .estadoCotizacion(cotizacion.getEstadoCotizacion())
+                .detalles(DetalleCotizacionResponse.fromEntities(cotizacion.getDetalles()))
                 .build();
     }
     public static List<CotizacionResponse> fromEntities(List<Cotizacion> listaCotizacion){

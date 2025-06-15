@@ -15,7 +15,6 @@ import lombok.*;
 public class DetalleCotizacionResponse {
     private Integer idDetalleCotizacion;
     private Producto producto;
-    private Cotizacion cotizacion;
     private Double cantidad;
     private Double precioCotizado;
     private Double montoSubtotalLinea;
@@ -23,7 +22,6 @@ public class DetalleCotizacionResponse {
         return DetalleCotizacionResponse.builder()
                 .idDetalleCotizacion(detalleCotizacion.getIdDetalleCotizacion())
                 .producto(detalleCotizacion.getProducto())
-                .cotizacion(detalleCotizacion.getCotizacion())
                 .cantidad(detalleCotizacion.getCantidad())
                 .precioCotizado(detalleCotizacion.getPrecioCotizado())
                 .montoSubtotalLinea(detalleCotizacion.getMontoSubtotalLinea())
