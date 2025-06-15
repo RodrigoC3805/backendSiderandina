@@ -32,68 +32,82 @@ public class CotizacionService {
     ProductoRepository productoRepository;
 
     public CotizacionResponse crearCotizacion(CotizacionRequest request) {
-        Cliente cliente = clienteRepository.findById(request.getIdCliente())
-            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+    // Validación de idCliente
+    if (request.getIdCliente() == null) {
+        throw new IllegalArgumentException("El idCliente no puede ser null");
+    }
+    // Validación de detalles
+    if (request.getDetalles() == null || request.getDetalles().isEmpty()) {
+        throw new IllegalArgumentException("La lista de detalles no puede estar vacía");
+    }
+    for (CotizacionRequest.DetalleCotizacionRequest det : request.getDetalles()) {
+        if (det.getIdProducto() == null) {
+            throw new IllegalArgumentException("El idProducto no puede ser null");
+        }
+    }
 
-        double subtotal = 0.0;
-        double igv = 0.0;
-        double descuento = request.getDescuento() != null ? request.getDescuento() : 0.0;
-        double total = 0.0;
+    Cliente cliente = clienteRepository.findById(request.getIdCliente())
+        .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        Cotizacion cotizacion = Cotizacion.builder()
-            .cliente(cliente)
-            .codigoCotizacion("COT-" + System.currentTimeMillis())
-            .fechaEmision(Timestamp.from(Instant.now()))
-            .descuento(descuento)
-            .idEstadoCot(1) // Estado inicial
+    double subtotal = 0.0;
+    double igv = 0.0;
+    double descuento = request.getDescuento() != null ? request.getDescuento() : 0.0;
+    double total = 0.0;
+
+    Cotizacion cotizacion = Cotizacion.builder()
+        .cliente(cliente)
+        .codigoCotizacion("COT-" + System.currentTimeMillis())
+        .fechaEmision(Timestamp.from(Instant.now()))
+        .descuento(descuento)
+        .idEstadoCot(1) // Estado inicial
+        .build();
+
+    cotizacion = cotizacionRepository.save(cotizacion);
+
+    for (CotizacionRequest.DetalleCotizacionRequest det : request.getDetalles()) {
+        Producto producto = productoRepository.findById(det.getIdProducto())
+            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        double precioUnitario = producto.getPrecioVentaBase();
+        double sub = det.getCantidad() * precioUnitario;
+        subtotal += sub;
+
+        DetalleCotizacion detalle = DetalleCotizacion.builder()
+            .id(new DetalleCotizacionId(cotizacion.getIdCotizacion(), producto.getIdProducto()))
+            .cotizacion(cotizacion)
+            .producto(producto)
+            .cantidad(det.getCantidad())
             .build();
+        detalleCotizacionRepository.save(detalle);
+    }
 
-        cotizacion = cotizacionRepository.save(cotizacion);
+    igv = subtotal * 0.18; // IGV 18%
+    total = subtotal + igv - descuento;
 
-        for (CotizacionRequest.DetalleCotizacionRequest det : request.getDetalles()) {
-            Producto producto = productoRepository.findById(det.getIdProducto())
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-            double precioUnitario = producto.getPrecioVentaBase();
-            double sub = det.getCantidad() * precioUnitario;
-            subtotal += sub;
+    cotizacion.setMontoSubtotal(subtotal);
+    cotizacion.setMontoIgv(igv);
+    cotizacion.setMontoTotal(total);
+    cotizacionRepository.save(cotizacion);
 
-            DetalleCotizacion detalle = DetalleCotizacion.builder()
-                .id(new DetalleCotizacionId(cotizacion.getIdCotizacion(), producto.getIdProducto()))
-                .cotizacion(cotizacion)
-                .producto(producto)
+    return CotizacionResponse.builder()
+        .idCotizacion(cotizacion.getIdCotizacion())
+        .codigoCotizacion(cotizacion.getCodigoCotizacion())
+        .fechaEmision(cotizacion.getFechaEmision())
+        .montoSubtotal(cotizacion.getMontoSubtotal())
+        .montoIgv(cotizacion.getMontoIgv())
+        .montoTotal(cotizacion.getMontoTotal())
+        .descuento(cotizacion.getDescuento())
+        .idCliente(cliente.getIdCliente())
+        .idEstadoCot(cotizacion.getIdEstadoCot())
+        .detalles(request.getDetalles().stream().map(det -> {
+            Producto producto = productoRepository.findById(det.getIdProducto()).orElse(null);
+            return DetalleCotizacionResponse.builder()
+                .idProducto(det.getIdProducto())
+                .nombreProducto(producto != null ? producto.getNombre() : "")
                 .cantidad(det.getCantidad())
                 .build();
-            detalleCotizacionRepository.save(detalle);
-        }
-
-        igv = subtotal * 0.18; // IGV 18%
-        total = subtotal + igv - descuento;
-
-        cotizacion.setMontoSubtotal(subtotal);
-        cotizacion.setMontoIgv(igv);
-        cotizacion.setMontoTotal(total);
-        cotizacionRepository.save(cotizacion);
-
-        return CotizacionResponse.builder()
-            .idCotizacion(cotizacion.getIdCotizacion())
-            .codigoCotizacion(cotizacion.getCodigoCotizacion())
-            .fechaEmision(cotizacion.getFechaEmision())
-            .montoSubtotal(cotizacion.getMontoSubtotal())
-            .montoIgv(cotizacion.getMontoIgv())
-            .montoTotal(cotizacion.getMontoTotal())
-            .descuento(cotizacion.getDescuento())
-            .idCliente(cliente.getIdCliente())
-            .idEstadoCot(cotizacion.getIdEstadoCot())
-            .detalles(request.getDetalles().stream().map(det -> {
-                Producto producto = productoRepository.findById(det.getIdProducto()).orElse(null);
-                return DetalleCotizacionResponse.builder()
-                    .idProducto(det.getIdProducto())
-                    .nombreProducto(producto != null ? producto.getNombre() : "")
-                    .cantidad(det.getCantidad())
-                    .build();
-            }).collect(Collectors.toList()))
-            .build();
-    }
+        }).collect(Collectors.toList()))
+        .build();
+}
 
     public List<CotizacionResponse> listarCotizaciones() {
         return cotizacionRepository.findAll().stream()
@@ -120,4 +134,16 @@ public class CotizacionService {
                 .build())
             .collect(Collectors.toList());
     }
+
+    public List<CotizacionResponse> listarCotizacionesPorCliente(Integer idCliente) {
+    return cotizacionRepository.findAll().stream()
+        .filter(c -> c.getCliente() != null && c.getCliente().getIdCliente().equals(idCliente))
+        .map(c -> CotizacionResponse.builder()
+            .idCotizacion(c.getIdCotizacion())
+            .codigoCotizacion(c.getCodigoCotizacion())
+            .fechaEmision(c.getFechaEmision())
+            .idEstadoCot(c.getIdEstadoCot())
+            .build())
+        .collect(Collectors.toList());
+}
 }

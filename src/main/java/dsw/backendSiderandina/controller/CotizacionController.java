@@ -24,4 +24,10 @@ public class CotizacionController {
     public ResponseEntity<?> listarCotizaciones() {
         return ResponseEntity.ok(cotizacionService.listarCotizaciones());
     }
+
+    //Endpoint para cotizaciones por cliente
+    @GetMapping("/por-cliente")
+    public ResponseEntity<?> listarCotizacionesPorCliente(@RequestParam Integer idCliente) {
+        return ResponseEntity.ok(cotizacionService.listarCotizacionesPorCliente(idCliente));
+}
 }
