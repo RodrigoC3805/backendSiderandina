@@ -17,7 +17,11 @@ public class CotizacionRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DetalleCotizacionRequest {
+        private Integer idDetalleCotizacion;
+        private Integer idCotizacion;
         private Integer idProducto;
-        private Integer cantidad;
+        private Double cantidad;
+        private Double precioCotizado;
+        private Double montoSubtotalLinea;
     }
 }
