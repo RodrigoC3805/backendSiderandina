@@ -29,5 +29,5 @@ public class CotizacionController {
     @GetMapping("/por-cliente")
     public ResponseEntity<?> listarCotizacionesPorCliente(@RequestParam Integer idCliente) {
         return ResponseEntity.ok(cotizacionService.listarCotizacionesPorCliente(idCliente));
-}
+    }
 }

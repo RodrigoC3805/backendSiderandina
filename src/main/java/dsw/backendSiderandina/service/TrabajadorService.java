@@ -39,7 +39,6 @@ public class TrabajadorService {
     public TrabajadorResponse createTrabajador(TrabajadorRequest trabajadorRequest) {
         Trabajador trabajador = Trabajador.builder()
                 .tipoDocumento(tipoDocumentoRepository.findById(trabajadorRequest.getIdTipoDocumento()).orElse(null))
-                .tipoTrabajador(tipoTrabajadorRepository.findById(trabajadorRequest.getIdTipoTrabajador()).orElse(null))
                 .numeroDocumento(trabajadorRequest.getNumeroDocumento())
                 .apellidoPaterno(trabajadorRequest.getApellidoPaterno())
                 .apellidoMaterno(trabajadorRequest.getApellidoMaterno())
@@ -108,7 +107,6 @@ public class TrabajadorService {
                     trabajador.getNombres() + " " + trabajador.getApellidoPaterno() + " " + trabajador.getApellidoMaterno(),
                     trabajador.getTipoDocumento() != null ? trabajador.getTipoDocumento().getDescripcion() : "",
                     trabajador.getNumeroDocumento(),
-                    trabajador.getTipoTrabajador() != null ? trabajador.getTipoTrabajador().getDescripcion() : "",
                     sueldo,
                     moneda,
                     estadoContrato
@@ -122,7 +120,6 @@ public class TrabajadorService {
                 .orElseThrow(() -> new EntityNotFoundException("Trabajador no encontrado con ID: " + idTrabajador));
 
         trabajador.setTipoDocumento(tipoDocumentoRepository.findById(request.getIdTipoDocumento()).orElse(null));
-        trabajador.setTipoTrabajador(tipoTrabajadorRepository.findById(request.getIdTipoTrabajador()).orElse(null));
         trabajador.setNumeroDocumento(request.getNumeroDocumento());
         trabajador.setApellidoPaterno(request.getApellidoPaterno());
         trabajador.setApellidoMaterno(request.getApellidoMaterno());
@@ -148,5 +145,4 @@ public class TrabajadorService {
     public Optional<Trabajador> findByUsuarioEmail(String email) {
         return trabajadorRepository.findByUsuarioEmail(email);
     }
-    
 }

@@ -76,8 +76,9 @@ public class AsistenciaService {
                                                       a.getTrabajador().getApellidoPaterno() + " " +
                                                       a.getTrabajador().getApellidoMaterno());
                 row.createCell(1).setCellValue(a.getTrabajador().getNumeroDocumento());
-                row.createCell(2).setCellValue(a.getTrabajador().getTipoTrabajador() != null
+                /*row.createCell(2).setCellValue(a.getTrabajador().getTipoTrabajador() != null
                 ? a.getTrabajador().getTipoTrabajador().getDescripcion() : "-");
+                */
                 row.createCell(3).setCellValue(a.getFecha() != null ? a.getFecha().toString() : "");
                 row.createCell(4).setCellValue(a.getHoraIngreso() != null ? a.getHoraIngreso().toString() : "");
                 row.createCell(5).setCellValue(a.getHoraSalida() != null ? a.getHoraSalida().toString() : "");

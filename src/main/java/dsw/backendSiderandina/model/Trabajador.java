@@ -30,10 +30,6 @@ public class Trabajador {
     @JoinColumn(name="id_tipo_documento", referencedColumnName = "id_tipo_documento")
     private TipoDocumento tipoDocumento;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="id_tipo_trabajador", referencedColumnName = "id_tipo_trabajador")
-    private TipoTrabajador tipoTrabajador;
-
     @Column(name="numero_documento")
     private String numeroDocumento;
 

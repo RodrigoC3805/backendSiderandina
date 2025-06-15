@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class TrabajadorRequest {
     private Integer idTrabajador;
     private Integer idTipoDocumento;
-    private Integer idTipoTrabajador;
     private String numeroDocumento;
     private String apellidoPaterno;
     private String apellidoMaterno;

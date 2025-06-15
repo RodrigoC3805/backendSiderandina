@@ -99,4 +99,11 @@ public class CotizacionService {
     public List<CotizacionResponse> listarCotizaciones() {
         return CotizacionResponse.fromEntities(cotizacionRepository.findAll());
     }
+    
+    public List<CotizacionResponse> listarCotizacionesPorCliente(Integer idCliente) {
+        return cotizacionRepository.findAll().stream()
+                .filter(c -> c.getCliente() != null && c.getCliente().getIdCliente().equals(idCliente))
+                .map(c -> CotizacionResponse.fromEntity(c))
+                .collect(Collectors.toList());
+    }
 }

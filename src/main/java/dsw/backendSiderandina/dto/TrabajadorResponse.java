@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class TrabajadorResponse {
     private Integer idTrabajador;
     private TipoDocumentoResponse tipoDocumento; // Respuesta del tipo de documento
-    private TipoTrabajadorResponse tipoTrabajador; // Respuesta del tipo de trabajador
     private String numeroDocumento;
     private String apellidoPaterno;
     private String apellidoMaterno;
@@ -28,7 +27,6 @@ public static TrabajadorResponse fromEntity(Trabajador trabajador) {
     return TrabajadorResponse.builder()
             .idTrabajador(trabajador.getIdTrabajador())
             .tipoDocumento(TipoDocumentoResponse.fromEntity(trabajador.getTipoDocumento()))
-            .tipoTrabajador(TipoTrabajadorResponse.fromEntity(trabajador.getTipoTrabajador()))
             .numeroDocumento(trabajador.getNumeroDocumento())
             .apellidoPaterno(trabajador.getApellidoPaterno())
             .apellidoMaterno(trabajador.getApellidoMaterno())
@@ -41,7 +39,6 @@ public static TrabajadorResponse fromEntity(Trabajador trabajador) {
         return TrabajadorResponse.builder()
                 .idTrabajador(trabajador.getIdTrabajador())
                 .tipoDocumento(TipoDocumentoResponse.fromEntity(trabajador.getTipoDocumento()))
-                .tipoTrabajador(TipoTrabajadorResponse.fromEntity(trabajador.getTipoTrabajador()))
                 .numeroDocumento(trabajador.getNumeroDocumento())
                 .apellidoPaterno(trabajador.getApellidoPaterno())
                 .apellidoMaterno(trabajador.getApellidoMaterno())
