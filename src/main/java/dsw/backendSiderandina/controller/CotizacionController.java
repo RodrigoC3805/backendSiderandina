@@ -1,10 +1,13 @@
 package dsw.backendSiderandina.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import dsw.backendSiderandina.dto.CotizacionRequest;
+import dsw.backendSiderandina.dto.CotizacionRequest.DetalleCotizacionRequest;
 import dsw.backendSiderandina.dto.CotizacionResponse;
 import dsw.backendSiderandina.service.CotizacionService;
 
@@ -30,4 +33,12 @@ public class CotizacionController {
     public ResponseEntity<?> listarCotizacionesPorCliente(@RequestParam Integer idCliente) {
         return ResponseEntity.ok(cotizacionService.listarCotizacionesPorCliente(idCliente));
     }
+
+    @PutMapping("/actualizar-precios-estado")
+    public ResponseEntity<?> actualizarPreciosYEstado(
+        @RequestParam Integer idCotizacion,
+        @RequestBody List<DetalleCotizacionRequest> detalles) {
+    cotizacionService.actualizarPreciosYEstado(idCotizacion, detalles);
+    return ResponseEntity.ok().build();
+}
 }

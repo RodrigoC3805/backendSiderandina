@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dsw.backendSiderandina.dto.CotizacionRequest;
 import dsw.backendSiderandina.dto.CotizacionResponse;
@@ -106,4 +107,33 @@ public class CotizacionService {
                 .map(c -> CotizacionResponse.fromEntity(c))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void actualizarPreciosYEstado(Integer idCotizacion, List<CotizacionRequest.DetalleCotizacionRequest> detalles) {
+    Cotizacion cotizacion = cotizacionRepository.findById(idCotizacion)
+        .orElseThrow(() -> new RuntimeException("Cotización no encontrada"));
+
+    // Actualiza precios de los detalles
+    for (CotizacionRequest.DetalleCotizacionRequest det : detalles) {
+        DetalleCotizacion detalle = detalleCotizacionRepository.findById(det.getIdDetalleCotizacion())
+            .orElseThrow(() -> new RuntimeException("Detalle no encontrado"));
+        detalle.setPrecioCotizado(det.getPrecioCotizado());
+        detalle.setMontoSubtotalLinea(det.getCantidad() * det.getPrecioCotizado());
+        detalleCotizacionRepository.save(detalle);
+    }
+
+    // Recalcula totales
+    double subtotal = detalles.stream().mapToDouble(d -> d.getCantidad() * d.getPrecioCotizado()).sum();
+    double igv = subtotal * 0.18;
+    double descuento = cotizacion.getDescuento() != null ? cotizacion.getDescuento() : 0.0;
+    double total = subtotal + igv - descuento;
+
+    cotizacion.setMontoSubtotal(subtotal);
+    cotizacion.setMontoIgv(igv);
+    cotizacion.setMontoTotal(total);
+
+    // Cambia estado a "Entregada" (por ejemplo, idEstadoCot = 2)
+    cotizacion.setEstadoCotizacion(estadoCotizacionRepository.findById(2).get());
+    cotizacionRepository.save(cotizacion);
+}
 }
