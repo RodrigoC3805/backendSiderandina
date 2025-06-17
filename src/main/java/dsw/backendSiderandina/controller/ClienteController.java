@@ -39,4 +39,19 @@ public class ClienteController {
         return ResponseEntity.ok(cliente.get());
     }
     
+    @GetMapping("/findclientebyuserid")
+    public ResponseEntity<?> findByUserId(@RequestParam Integer idUsuario) {
+        Optional<Cliente> cliente;
+        try {
+            cliente = clienteService.findByUsuarioIdUsuario(idUsuario);
+        } catch (Exception e) {
+            logger.error("Error inesperado", e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (cliente.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.builder().message("Cliente not found").build());
+        return ResponseEntity.ok(cliente.get());
+    }
+
 }

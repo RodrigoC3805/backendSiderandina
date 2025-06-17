@@ -11,4 +11,5 @@ import dsw.backendSiderandina.model.Cliente;
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     boolean existsByRuc(String ruc);
     Optional<Cliente> findByUsuarioEmail(String email);
+    Optional<Cliente> findByUsuarioIdUsuario(Integer idUsuario);
 }

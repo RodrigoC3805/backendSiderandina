@@ -16,4 +16,9 @@ public class ClienteService {
     public Optional<Cliente> findByUsuarioEmail(String email) {
         return clienteRepository.findByUsuarioEmail(email);
     }
+
+    public Optional<Cliente> findByUsuarioIdUsuario(Integer idUsuario) {
+        return clienteRepository.findByUsuarioIdUsuario(idUsuario);
+    }
+
 }
