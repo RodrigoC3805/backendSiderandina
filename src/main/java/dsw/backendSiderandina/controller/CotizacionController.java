@@ -28,17 +28,26 @@ public class CotizacionController {
         return ResponseEntity.ok(cotizacionService.listarCotizaciones());
     }
 
-    //Endpoint para cotizaciones por cliente
+    // Endpoint para cotizaciones por cliente
     @GetMapping("/por-cliente")
     public ResponseEntity<?> listarCotizacionesPorCliente(@RequestParam Integer idCliente) {
         return ResponseEntity.ok(cotizacionService.listarCotizacionesPorCliente(idCliente));
     }
 
+    //Aceptar cotizacion
     @PutMapping("/actualizar-precios-estado")
     public ResponseEntity<?> actualizarPreciosYEstado(
-        @RequestParam Integer idCotizacion,
-        @RequestBody List<DetalleCotizacionRequest> detalles) {
-    cotizacionService.actualizarPreciosYEstado(idCotizacion, detalles);
-    return ResponseEntity.ok().build();
-}
+            @RequestParam Integer idCotizacion,
+            @RequestBody List<DetalleCotizacionRequest> detalles) {
+        cotizacionService.actualizarPreciosYEstado(idCotizacion, detalles);
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/rechazar-cotizacion")
+    public ResponseEntity<?> rechazarCotizacion(
+            @RequestParam Integer idCotizacion,
+            @RequestBody List<DetalleCotizacionRequest> detalles) {
+        cotizacionService.rechazarCotizacion(idCotizacion, detalles);
+        return ResponseEntity.ok().build();
+    }
 }
