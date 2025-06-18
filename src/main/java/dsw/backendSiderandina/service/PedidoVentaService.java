@@ -1,6 +1,7 @@
 package dsw.backendSiderandina.service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,13 @@ public class PedidoVentaService {
 
         pedidoVenta = pedidoVentaRepository.save(pedidoVenta);
         return PedidoVentaResponse.fromEntity(pedidoVenta);
+    }
+
+    public List<PedidoVentaResponse> listarPedidosPorCliente(Integer idCliente) {
+        return pedidoVentaRepository.findByCotizacion_Cliente_IdCliente(idCliente)
+            .stream()
+            .map(PedidoVentaResponse::fromEntity)
+            .toList();
     }
 
 }

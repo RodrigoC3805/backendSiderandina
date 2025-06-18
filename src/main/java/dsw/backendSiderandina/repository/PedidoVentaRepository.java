@@ -8,4 +8,5 @@ import dsw.backendSiderandina.model.PedidoVenta;
 @Repository
 public interface PedidoVentaRepository extends JpaRepository<PedidoVenta, Integer> {
     List<PedidoVenta> findByCotizacion_IdCotizacion(Integer idCotizacion);
+    List<PedidoVenta> findByCotizacion_Cliente_IdCliente(Integer idCliente);
 }
