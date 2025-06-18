@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import dsw.backendSiderandina.model.EstadoPedido;
 import dsw.backendSiderandina.model.PedidoVenta;
 
 @Data
@@ -20,7 +19,10 @@ public class PedidoVentaResponse {
     private String codigoVenta;
     private Timestamp fechaPedido;
     private String direccionEntrega;
-    private EstadoPedido estadoPedido;
+    //private EstadoPedido estadoPedido;
+    private String estadoPedidoDescripcion;
+    //private Cotizacion cotizacion;
+    private Double montoTotalCotizacion;
 
     public static PedidoVentaResponse fromEntity(PedidoVenta pedidoVenta) {
         return PedidoVentaResponse.builder()
@@ -30,7 +32,12 @@ public class PedidoVentaResponse {
                 .codigoVenta(pedidoVenta.getCodigoVenta())
                 .fechaPedido(pedidoVenta.getFechaPedido())
                 .direccionEntrega(pedidoVenta.getDireccionEntrega())
-                .estadoPedido(pedidoVenta.getEstadoPedido())
+                //.estadoPedido(pedidoVenta.getEstadoPedido())
+                .estadoPedidoDescripcion(pedidoVenta.getEstadoPedido().getDescripcion())
+                //.cotizacion(pedidoVenta.getCotizacion())
+                .montoTotalCotizacion(
+                    pedidoVenta.getCotizacion() != null ? pedidoVenta.getCotizacion().getMontoTotal() : null
+                )
                 .build();
     }
 }
