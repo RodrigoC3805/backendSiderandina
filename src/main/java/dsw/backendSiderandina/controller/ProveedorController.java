@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dsw.backendSiderandina.model.Proveedor;
@@ -35,5 +36,14 @@ public class ProveedorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ErrorResponse.builder().message("Proveedor not found"));
         return ResponseEntity.ok(listaProveedores);
+    }
+
+    @GetMapping("/por-email")
+    public ResponseEntity<?> getProveedorByEmail(@RequestParam String email) {
+        Proveedor proveedor = proveedorRepository.findByEmail(email);
+        if (proveedor == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proveedor no encontrado para este email");
+        }
+        return ResponseEntity.ok(proveedor);
     }
 }
