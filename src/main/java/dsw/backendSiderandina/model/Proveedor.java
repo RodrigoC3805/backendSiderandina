@@ -23,4 +23,8 @@ public class Proveedor {
     private String direccion;
     private String email;
     private String telefono;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+    private Usuario usuario;
 }

@@ -1,6 +1,7 @@
 package dsw.backendSiderandina.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import dsw.backendSiderandina.model.Proveedor;
 import dsw.backendSiderandina.repository.ProveedorRepository;
 import dsw.backendSiderandina.utils.ErrorResponse;
@@ -45,5 +45,19 @@ public class ProveedorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proveedor no encontrado para este email");
         }
         return ResponseEntity.ok(proveedor);
+    }
+    @GetMapping("/findproveedorbyuserid")
+    public ResponseEntity<?> findByUserId(@RequestParam Integer idUsuario) {
+        Optional<Proveedor> proveedor = null;
+        try {
+            proveedor = proveedorRepository.findByUsuarioIdUsuario(idUsuario);
+        } catch (Exception e) {
+            logger.error("Error inesperado", e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (proveedor.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.builder().message("Proveedor not found").build());
+        return ResponseEntity.ok(proveedor.get());
     }
 }

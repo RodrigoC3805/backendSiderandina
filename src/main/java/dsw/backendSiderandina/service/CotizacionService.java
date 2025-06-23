@@ -98,12 +98,13 @@ public class CotizacionService {
     }
 
     public List<CotizacionResponse> listarCotizacionesPorCliente(Integer idCliente) {
-        return cotizacionRepository.findAll().stream()
-                .filter(c -> c.getCliente() != null && c.getCliente().getIdCliente().equals(idCliente))
-                .map(c -> CotizacionResponse.fromEntity(c))
-                .collect(Collectors.toList());
+            return cotizacionRepository.findAll().stream()
+                            .filter(c -> c.getCliente() != null && c.getCliente().getIdCliente().equals(idCliente))
+                            .map(c -> CotizacionResponse.fromEntity(c))
+                            .collect(Collectors.toList());
     }
 
+    // Entregar cotización
     @Transactional
     public void actualizarPreciosYEstado(Integer idCotizacion,
             List<CotizacionRequest.DetalleCotizacionRequest> detalles) {

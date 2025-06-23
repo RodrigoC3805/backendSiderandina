@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 
 import dsw.backendSiderandina.dto.AuthResponse;
 import dsw.backendSiderandina.dto.LoginRequest;
+import dsw.backendSiderandina.dto.RegisterProveedorRequest;
 import dsw.backendSiderandina.dto.RegisterRequest;
 import dsw.backendSiderandina.dto.RegisterWorkerRequest;
 import dsw.backendSiderandina.repository.ClienteRepository;
+import dsw.backendSiderandina.repository.ProveedorRepository;
 import dsw.backendSiderandina.repository.TrabajadorRepository;
 import dsw.backendSiderandina.repository.UsuarioRepository;
 import dsw.backendSiderandina.utils.JwtUtil;
@@ -21,6 +23,7 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final ClienteRepository clienteRepository;
     private final TrabajadorRepository trabajadorRepository;
+    private final ProveedorRepository proveedorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtService;
     
@@ -58,6 +61,26 @@ public class AuthService {
         usuarioRepository.save(request.getUsuario());
         request.getTrabajador().setUsuario(request.getUsuario());
         trabajadorRepository.save(request.getTrabajador());
+        String jwtToken = jwtService.generateToken(request.getUsuario());
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+    
+    @Transactional
+    public AuthResponse registerProveedor(RegisterProveedorRequest request) {
+        if (proveedorRepository.existsByRuc(request.getProveedor().getRuc()))
+            throw new IllegalArgumentException("Ya existe un proveedor con ese ruc");
+        if (usuarioRepository.existsByEmail(request.getUsuario().getEmail())) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese email");
+        }
+        if (request.getUsuario().getPassword() == null) {
+            throw new IllegalArgumentException("La contraseña no puede ser nula");
+        }
+        request.getUsuario().setPassword(passwordEncoder.encode(request.getUsuario().getPassword()));
+        usuarioRepository.save(request.getUsuario());
+        request.getProveedor().setUsuario(request.getUsuario());
+        proveedorRepository.save(request.getProveedor());
         String jwtToken = jwtService.generateToken(request.getUsuario());
         return AuthResponse.builder()
                 .token(jwtToken)
