@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import dsw.backendSiderandina.dto.CotizacionRequest;
 import dsw.backendSiderandina.dto.CotizacionResponse;
 import dsw.backendSiderandina.dto.DetalleCotizacionResponse;
+import dsw.backendSiderandina.dto.ProductoResponse;
 import dsw.backendSiderandina.model.Cliente;
 import dsw.backendSiderandina.model.Cotizacion;
 import dsw.backendSiderandina.model.DetalleCotizacion;
@@ -32,7 +33,7 @@ public class CotizacionService {
     @Autowired
     ClienteRepository clienteRepository;
     @Autowired
-    ProductoRepository productoRepository;
+    ProductoService productoService;
 
     public CotizacionResponse crearCotizacion(CotizacionRequest request) {
         Cliente cliente = clienteRepository.findById(request.getIdCliente())
@@ -51,12 +52,7 @@ public class CotizacionService {
         cotizacion = cotizacionRepository.save(cotizacion);
 
         for (CotizacionRequest.DetalleCotizacionRequest det : request.getDetalles()) {
-            Producto producto = productoRepository.findById(det.getIdProducto())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-            // double precioUnitario = producto.getPrecioVentaBase();
-            // double sub = det.getCantidad() * precioUnitario;
-            // subtotal += sub;
-
+                Producto producto = ProductoResponse.toEntity(productoService.findProducto(det.getIdProducto()));
             DetalleCotizacion detalle = DetalleCotizacion.builder()
                     .cotizacion(cotizacion)
                     .producto(producto)
@@ -83,7 +79,7 @@ public class CotizacionService {
                 .estadoCotizacion(estadoCotizacionRepository.findById(
                         1).get())
                 .detalles(request.getDetalles().stream().map(det -> {
-                    Producto producto = productoRepository.findById(det.getIdProducto()).orElse(null);
+                    Producto producto = ProductoResponse.toEntity(productoService.findProducto(det.getIdProducto()));
                     DetalleCotizacionResponse.DetalleCotizacionResponseBuilder builder = DetalleCotizacionResponse
                             .builder();
                     builder.producto(producto);
@@ -113,9 +109,12 @@ public class CotizacionService {
 
         // Actualiza precios de los detalles
         for (CotizacionRequest.DetalleCotizacionRequest det : detalles) {
-            if(det.getCantidad() >= productoRepository.findById(det.getIdProducto()).get().getStock()) {
-                throw new IllegalArgumentException("No hay suficiente stock");
+            ProductoResponse productoResponse = productoService.findProducto(det.getIdProducto());
+            if (det.getCantidad() >= productoResponse.getStock()) {
+                    throw new IllegalArgumentException("No hay suficiente stock");
             }
+            productoResponse.setStock((int) (productoResponse.getStock() - det.getCantidad()));
+            productoService.actualizarStock(productoResponse);
             DetalleCotizacion detalle = detalleCotizacionRepository.findById(det.getIdDetalleCotizacion())
                     .orElseThrow(() -> new RuntimeException("Detalle no encontrado"));
             detalle.setPrecioCotizado(det.getPrecioCotizado());

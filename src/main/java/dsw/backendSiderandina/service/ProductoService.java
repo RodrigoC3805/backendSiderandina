@@ -58,15 +58,20 @@ public class ProductoService {
     }
 
     public ProductoResponse findProducto(Integer id) {
-        Optional<Producto> result = productoRepository.findById(id);
-        if (!result.isPresent())
-            return null;
-        return ProductoResponse.fromEntity(result.get());
+        Producto producto = productoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        return ProductoResponse.fromEntity(producto);
     }
     
     // metodo para buscar productos por nombre
     public List<ProductoResponse> buscarPorNombre(String nombre) {
         return ProductoResponse.fromEntities(productoRepository.findByNombreContainingIgnoreCase(nombre));
+    }
+    public ProductoResponse actualizarStock(ProductoResponse productoResponse) {
+        Producto producto = productoRepository.findById(productoResponse.getIdProducto()).get();
+        producto.setStock(productoResponse.getStock());
+        producto = productoRepository.save(producto);
+        return ProductoResponse.fromEntity(producto);
     }
 
 }

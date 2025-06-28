@@ -48,9 +48,24 @@ public class ProductoResponse {
                 .build();
     }
 
-     public static List<ProductoResponse> fromEntities(List<Producto> producto) {
+    public static List<ProductoResponse> fromEntities(List<Producto> producto) {
         return producto.stream()
-            .map(ProductoResponse::fromEntity)
+                .map(ProductoResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+    
+    public static Producto toEntity(ProductoResponse productoResponse) {
+        return Producto.builder()
+                .idProducto(productoResponse.getIdProducto())
+                .nombre(productoResponse.getNombre())
+                .sku(productoResponse.getSku())
+                .precioVentaBase(productoResponse.getPrecioVentaBase())
+                .costoUnitarioBase(productoResponse.getCostoUnitarioBase())
+                .stock(productoResponse.getStock())
+                .stockMin(productoResponse.getStockMin())
+                .urlImagen(productoResponse.getUrlImagen())
+                .idCatProd(CategoriaProductoResponse.toEntity(productoResponse.getCategorioProducto()))
+                .idUnidadesMedida(UnidadesMedidaResponse.toEntity(productoResponse.getUnidadesMedida()))
+                .build();
     }
 }

@@ -20,4 +20,11 @@ public class UnidadesMedidaResponse {
                 .descripcion(unidadesMedida.getDescripcion())
                 .build();
     }
+    
+    public static UnidadesMedida toEntity(UnidadesMedidaResponse unidadesMedidaResponse) {
+        return UnidadesMedida.builder()
+                .idUnidadesMedida(unidadesMedidaResponse.getIdUnidadesMedida())
+                .descripcion(unidadesMedidaResponse.getDescripcion())
+                .build();
+    }
 }
