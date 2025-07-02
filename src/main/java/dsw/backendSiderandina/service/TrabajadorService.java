@@ -142,7 +142,12 @@ public class TrabajadorService {
 
         return TrabajadorResponse.fromEntity(trabajador, contrato);
     }
+
     public Optional<Trabajador> findByUsuarioEmail(String email) {
         return trabajadorRepository.findByUsuarioEmail(email);
+    }
+    public Trabajador getTrabajadorEntity(Integer id) {
+        return trabajadorRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Trabajador no encontrado"));
     }
 }

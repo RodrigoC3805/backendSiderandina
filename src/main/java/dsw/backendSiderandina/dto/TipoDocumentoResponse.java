@@ -20,4 +20,11 @@ public class TipoDocumentoResponse {
                 .descripcion(tipoDocumento.getDescripcion())
                 .build();
     }
+    public static TipoDocumento toEntity(TipoDocumentoResponse response){
+        return TipoDocumento.builder()
+                .idTipoDocumento(response.getIdTipoDocumento())
+                .descripcion(response.getDescripcion())
+                .build();
+    }
+
 }

@@ -1,6 +1,7 @@
 package dsw.backendSiderandina.dto;
 
 import dsw.backendSiderandina.model.Trabajador;
+import dsw.backendSiderandina.model.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class TrabajadorResponse {
     private String nombres;
     private String emailContacto;
     private ContratoResponse contrato;
+    private Usuario usuario;
 
 public static TrabajadorResponse fromEntity(Trabajador trabajador) {
     return TrabajadorResponse.builder()
@@ -52,5 +54,17 @@ public static TrabajadorResponse fromEntity(Trabajador trabajador) {
         return trabajadores.stream()
                 .map(TrabajadorResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+    public static Trabajador toEntity (TrabajadorResponse response){
+        return Trabajador.builder()
+                .idTrabajador(response.getIdTrabajador())
+                .apellidoPaterno(response.getApellidoPaterno())
+                .apellidoMaterno(response.getApellidoMaterno())
+                .nombres(response.getNombres())
+                .emailContacto(response.getEmailContacto())
+                .numeroDocumento(response.getNumeroDocumento())
+                .tipoDocumento(TipoDocumentoResponse.toEntity(response.getTipoDocumento()))
+                .usuario(response.getUsuario())
+                .build();
     }
 }
