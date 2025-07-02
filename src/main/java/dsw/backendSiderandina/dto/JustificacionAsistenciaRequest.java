@@ -21,7 +21,5 @@ public class JustificacionAsistenciaRequest {
     private LocalTime hora_salida;
 
     // Para un nuevo registro de justificacion
-
-    private LocalDate fechaSolicitud;
     private Integer idMotivoJustificacion;
 }
