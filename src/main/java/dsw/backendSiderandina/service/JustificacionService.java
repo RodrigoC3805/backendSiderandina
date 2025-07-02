@@ -6,6 +6,7 @@ import dsw.backendSiderandina.dto.TrabajadorResponse;
 import dsw.backendSiderandina.model.AsistenciaDiaria;
 import dsw.backendSiderandina.model.Justificacion;
 import dsw.backendSiderandina.repository.AsistenciaDiariaRepository;
+import dsw.backendSiderandina.repository.EstadoJustificacionRepository;
 import dsw.backendSiderandina.repository.JustificacionRepository;
 import dsw.backendSiderandina.repository.MotivoJustificacionRepository;
 import jakarta.transaction.Transactional;
@@ -26,7 +27,9 @@ public class JustificacionService {
     @Autowired
     private MotivoJustificacionRepository motivoJustificacionRepository;
     @Autowired
-    AsistenciaDiariaRepository asistenciaDiariaRepository;
+    private AsistenciaDiariaRepository asistenciaDiariaRepository;
+    @Autowired
+    private EstadoJustificacionRepository estadoJustificacionRepository;
     public List<Justificacion> findJustificacionesByTrabajadorId(Integer idTrabajador){
         return justificacionRepository.findByAsistenciaDiariaTrabajadorIdTrabajador(idTrabajador);
     }
@@ -50,9 +53,12 @@ public class JustificacionService {
                     .motivoJustificacion(
                             motivoJustificacionRepository.findById(request.getIdMotivoJustificacion()).get())
                     .fechaSolicitud(LocalDate.now())
+                    .estadoJustificacion(estadoJustificacionRepository.findById(3).orElseThrow(
+                            () -> new RuntimeException(
+                                    "EstadoJustificacion no encontrado")))
                     .build();
             justificacion.setDocSustento(docBytes);
-            justificacionRepository.save(justificacion);
+            justificacionRepository.save(justificacion);         
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

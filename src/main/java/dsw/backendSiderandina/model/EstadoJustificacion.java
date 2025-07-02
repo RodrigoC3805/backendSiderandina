@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class EstadoJustificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_estado_detalle_compra")
-    private Integer id_estado_jus;
+    @Column(name="id_estado_jus")
+    private Integer idEstadoJus;
     private String descripcion;
 }

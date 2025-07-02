@@ -1,6 +1,7 @@
 package dsw.backendSiderandina.dto;
 
 import dsw.backendSiderandina.model.AsistenciaDiaria;
+import dsw.backendSiderandina.model.EstadoJustificacion;
 import dsw.backendSiderandina.model.Justificacion;
 import dsw.backendSiderandina.model.MotivoJustificacion;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class JustificacionResponse {
     private AsistenciaDiaria asistenciaDiaria;
     private MotivoJustificacion motivoJustificacion;
     private LocalDate fechaSolicitud;
+    private EstadoJustificacion estadoJustificacion;
 
     public static JustificacionResponse fromEntity(Justificacion justificacion){
         return JustificacionResponse.builder()
@@ -26,6 +28,7 @@ public class JustificacionResponse {
                 .fechaSolicitud(justificacion.getFechaSolicitud())
                 .asistenciaDiaria(justificacion.getAsistenciaDiaria())
                 .motivoJustificacion(justificacion.getMotivoJustificacion())
+                .estadoJustificacion(justificacion.getEstadoJustificacion())
                 .build();
     }
 }

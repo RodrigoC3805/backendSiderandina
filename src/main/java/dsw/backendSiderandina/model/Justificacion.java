@@ -31,4 +31,7 @@ public class Justificacion {
     @ManyToOne
     @JoinColumn(name = "id_motivo", referencedColumnName = "id_motivo_justificacion")
     private MotivoJustificacion motivoJustificacion;
+    @ManyToOne
+    @JoinColumn(name = "id_estado_jus", referencedColumnName = "id_estado_jus")
+    private EstadoJustificacion estadoJustificacion;
 }
