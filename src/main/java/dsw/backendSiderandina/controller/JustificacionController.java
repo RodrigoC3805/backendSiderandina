@@ -18,10 +18,20 @@ public class JustificacionController {
     JustificacionService justificacionService;
 
     @PostMapping(path = "/create")
-    public ResponseEntity<?> createJustificacion(@ModelAttribute JustificacionAsistenciaRequest request, @RequestParam("doc_sustento")MultipartFile doc){
+    public ResponseEntity<?> createJustificacion(@ModelAttribute JustificacionAsistenciaRequest request,
+            @RequestParam("doc_sustento") MultipartFile doc) {
         try {
             return ResponseEntity.ok(justificacionService.createJustificacion(request, doc));
-        } catch (Exception e){
+        } catch (Exception e) {
+            logger.error("Error inesperado");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    @GetMapping(path = "/getmotivojustificacion")
+    public ResponseEntity<?> getMotivoJustificacion() {
+        try {
+            return ResponseEntity.ok(justificacionService.getMotivoJustificacion());
+        } catch (Exception e) {
             logger.error("Error inesperado");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
