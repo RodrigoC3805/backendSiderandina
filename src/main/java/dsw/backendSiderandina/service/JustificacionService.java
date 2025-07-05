@@ -31,9 +31,6 @@ public class JustificacionService {
     private AsistenciaDiariaRepository asistenciaDiariaRepository;
     @Autowired
     private EstadoJustificacionRepository estadoJustificacionRepository;
-    public List<Justificacion> findJustificacionesByTrabajadorId(Integer idTrabajador){
-        return justificacionRepository.findByAsistenciaDiariaTrabajadorIdTrabajador(idTrabajador);
-    }
     @Transactional
     public JustificacionResponse createJustificacion(JustificacionAsistenciaRequest request, MultipartFile doc) {
         AsistenciaDiaria asistenciaDiaria = AsistenciaDiaria
@@ -69,5 +66,14 @@ public class JustificacionService {
 
     public List<MotivoJustificacion> getMotivoJustificacion() {
         return motivoJustificacionRepository.findAll();
+    }
+    public List<JustificacionResponse> getMisJustificaciones(Integer idTrabajador) {
+        List<JustificacionResponse> justificaciones = justificacionRepository.findMisJustificacionesNoPDF(idTrabajador);
+        return justificaciones;
+    }
+    public byte[] getDocSustento(Integer idJustificacion) {
+        Justificacion justificacion = justificacionRepository.findById(idJustificacion)
+                .orElseThrow(() -> new RuntimeException("Justificación no encontrada"));
+        return justificacion.getDocSustento();
     }
 }

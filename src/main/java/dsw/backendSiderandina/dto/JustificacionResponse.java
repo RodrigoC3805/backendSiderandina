@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -30,5 +32,11 @@ public class JustificacionResponse {
                 .motivoJustificacion(justificacion.getMotivoJustificacion())
                 .estadoJustificacion(justificacion.getEstadoJustificacion())
                 .build();
+    }
+
+    public static List<JustificacionResponse> fromEntities(List<Justificacion> justificacion) {
+        return justificacion.stream()
+                .map(JustificacionResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 }

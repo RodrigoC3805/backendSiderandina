@@ -22,6 +22,7 @@ public class Justificacion {
     @Column(name = "fecha_solicitud")
     private LocalDate fechaSolicitud;
     //@Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "doc_sustento", columnDefinition = "bytea")
     private byte[] docSustento;
 

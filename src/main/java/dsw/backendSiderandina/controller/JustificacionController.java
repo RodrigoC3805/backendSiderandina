@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/rrhh/justificacion")
@@ -36,4 +39,25 @@ public class JustificacionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    @GetMapping(path = "/getmisjustificaciones")
+    public ResponseEntity<?> getMisJustificaciones(@RequestParam Integer idTrabajador) {
+        try{
+            return ResponseEntity.ok(justificacionService.getMisJustificaciones(idTrabajador));
+        } catch (Exception e) {
+            logger.error("Error inesperado al obtener mis justificaciones");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+        
+    }
+    @GetMapping(path ="/getdocsustento")
+    public ResponseEntity<?> getDocSustento(@RequestParam Integer idJustificacion) {
+        try {
+            return ResponseEntity.ok(justificacionService.getDocSustento(idJustificacion));
+        } catch (Exception e) {
+            logger.error("Error inesperado al obtener el documento de sustento");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    
 }
