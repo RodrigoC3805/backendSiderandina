@@ -51,22 +51,28 @@ public class CotizacionService {
 
         cotizacion = cotizacionRepository.save(cotizacion);
 
+        double subtotal = 0.0;
         for (CotizacionRequest.DetalleCotizacionRequest det : request.getDetalles()) {
-                Producto producto = ProductoResponse.toEntity(productoService.findProducto(det.getIdProducto()));
+            Producto producto = ProductoResponse.toEntity(productoService.findProducto(det.getIdProducto()));
+            double montoSubtotalLinea = det.getCantidad() * det.getPrecioCotizado();
+            subtotal += montoSubtotalLinea;
             DetalleCotizacion detalle = DetalleCotizacion.builder()
                     .cotizacion(cotizacion)
                     .producto(producto)
                     .cantidad(det.getCantidad())
+                    .precioCotizado(det.getPrecioCotizado())
+                    .montoSubtotalLinea(montoSubtotalLinea)
                     .build();
             detalleCotizacionRepository.save(detalle);
         }
+        double igv = subtotal * 0.18;
+        double descuento = request.getDescuento() != null ? request.getDescuento() : 0.0;
+        double total = subtotal + igv - descuento;
 
-        // igv = subtotal * 0.18; // IGV 18%
-        // total = subtotal + igv - descuento;
-
-        cotizacion.setMontoSubtotal((double) 0);
-        cotizacion.setMontoIgv((double) 0);
-        cotizacion.setMontoTotal((double) 0);
+        cotizacion.setMontoSubtotal(subtotal);
+        cotizacion.setMontoIgv(igv);
+        cotizacion.setMontoTotal(total);
+        cotizacion.setDescuento(descuento);
         cotizacionRepository.save(cotizacion);
         ;
         return CotizacionResponse.builder()

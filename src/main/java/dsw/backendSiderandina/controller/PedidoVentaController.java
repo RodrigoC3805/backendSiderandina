@@ -20,7 +20,7 @@ import dsw.backendSiderandina.service.PedidoVentaService;
 @RequestMapping("/api/cliente/pedidoventa")
 public class PedidoVentaController {
     @Autowired
-    PedidoVentaService pedidoVentaService;
+    private PedidoVentaService pedidoVentaService;
 
     @PostMapping
     public ResponseEntity<?> crearPedidoVenta(@RequestBody PedidoVentaRequest request) {
@@ -45,4 +45,8 @@ public class PedidoVentaController {
         }
     }
 
+    @GetMapping("/sin-despacho")
+    public List<PedidoVentaResponse> listarPedidosVentaSinDespacho() {
+        return pedidoVentaService.listarPedidosVentaSinDespacho();
+    }
 }
