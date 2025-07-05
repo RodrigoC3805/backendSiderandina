@@ -31,4 +31,8 @@ public class DespachoService {
         despacho.setEstado(estado);
         return despachoRepository.save(despacho);
     }
+
+    public List<Despacho> listarPorEstado(String estado) {
+        return despachoRepository.findByEstado(estado);
+    }
 }
