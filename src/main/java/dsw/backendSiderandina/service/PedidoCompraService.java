@@ -148,4 +148,9 @@ public class PedidoCompraService {
                 .toList()
         );
     }
+    public List<PedidoCompraResponse> listPedidosCompraEnviadosYEntregados() {
+        return PedidoCompraResponse.fromEntities(
+            pedidoCompraRepository.findAllPedidosEnviadosYEntregados()
+        );
+    }
 }

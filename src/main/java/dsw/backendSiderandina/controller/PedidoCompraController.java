@@ -101,11 +101,22 @@ public class PedidoCompraController {
     public ResponseEntity<?> actualizarEstadoPedido(@RequestBody ActualizarEstadoPedidoRequest request) {
         try {
             PedidoCompraResponse response = pedidoCompraService.actualizarEstadoPedido(
-                request.getIdPedidoCompra(), request.getIdEstadoPedido());
+                    request.getIdPedidoCompra(), request.getIdEstadoPedido());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al actualizar estado: " + e.getMessage());
+        }
+    }
+    @GetMapping("/pedidosenviados-entregados")
+    public ResponseEntity<?> getPedidosEnviadosYEntregados() {
+        try {
+            List<PedidoCompraResponse> pedidos = pedidoCompraService.listPedidosCompraEnviadosYEntregados();
+            return ResponseEntity.ok(pedidos);
+        } catch (Exception e) {
+            logger.error("Error al obtener pedidos enviados y entregados", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ErrorResponse.builder().message("Error al obtener pedidos enviados y entregados").build());
         }
     }
 }
