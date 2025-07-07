@@ -3,7 +3,7 @@ package dsw.backendSiderandina.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import dsw.backendSiderandina.model.Cotizacion;
+
 import dsw.backendSiderandina.model.DetalleCotizacion;
 import dsw.backendSiderandina.model.Producto;
 import lombok.*;

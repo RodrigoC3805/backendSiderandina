@@ -27,8 +27,16 @@ public class CategoriaProductoResponse {
     }
 
     public static List<CategoriaProductoResponse> fromEntities(List<CategoriaProducto> categoriaProducto) {
-            return categoriaProducto.stream()
+        return categoriaProducto.stream()
                 .map(CategoriaProductoResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+    
+    public static CategoriaProducto toEntity(CategoriaProductoResponse categoriaProductoResponse) {
+        return CategoriaProducto.builder()
+                .idCatProd(categoriaProductoResponse.getIdCatProd())
+                .nombre(categoriaProductoResponse.getNombre())
+                .urlImagen(categoriaProductoResponse.getUrlImagen())
+                .build();
     }
 }

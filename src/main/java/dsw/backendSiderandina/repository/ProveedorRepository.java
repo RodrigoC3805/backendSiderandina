@@ -1,11 +1,12 @@
 package dsw.backendSiderandina.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import dsw.backendSiderandina.model.Proveedor;
 
-@Repository
-public interface ProveedorRepository extends JpaRepository<Proveedor, Integer>{
-
+public interface ProveedorRepository extends JpaRepository<Proveedor, Integer> {
+    Proveedor findByEmail(String email);
+    boolean existsByRuc(String ruc);
+    Optional<Proveedor> findByUsuarioIdUsuario(Integer idUsuario);    
 }

@@ -49,4 +49,8 @@ public class PedidoVentaService {
             .toList();
     }
 
+    public List<PedidoVentaResponse> listarPedidosVentaSinDespacho() {
+        List<PedidoVenta> pedidos = pedidoVentaRepository.findPedidosVentaSinDespacho();
+        return pedidos.stream().map(PedidoVentaResponse::fromEntity).toList();
+    }
 }
