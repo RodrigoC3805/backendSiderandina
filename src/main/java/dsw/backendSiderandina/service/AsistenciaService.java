@@ -8,16 +8,12 @@ import dsw.backendSiderandina.repository.TrabajadorRepository;
 import jakarta.servlet.ServletOutputStream;
 
 import java.util.List;
-import jakarta.servlet.ServletOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Service
 public class AsistenciaService {
@@ -26,6 +22,7 @@ public class AsistenciaService {
     @Autowired
     private TrabajadorRepository trabajadorRepo;
 
+    // Registrar ingreso
     public AsistenciaDiaria registrarAsistenciaIngreso(AsistenciaRequest req) {
         Trabajador trabajador = trabajadorRepo.findByNumeroDocumento(req.getNumeroDocumento())
             .orElseThrow(() -> new RuntimeException("Trabajador no encontrado"));
@@ -37,6 +34,7 @@ public class AsistenciaService {
         return asistenciaRepo.save(asistencia);
     }
 
+    // Registrar salida
     public AsistenciaDiaria registrarAsistenciaSalida(AsistenciaRequest req) {
         // Busca la asistencia del día para ese trabajador y actualiza la hora de salida
         Trabajador trabajador = trabajadorRepo.findByNumeroDocumento(req.getNumeroDocumento())
