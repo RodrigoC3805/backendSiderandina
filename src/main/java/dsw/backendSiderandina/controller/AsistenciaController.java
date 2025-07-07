@@ -1,6 +1,9 @@
 package dsw.backendSiderandina.controller;
 
 import dsw.backendSiderandina.dto.AsistenciaRequest;
+import dsw.backendSiderandina.dto.ReporteAsistenciaDTO;
+import dsw.backendSiderandina.dto.ReporteHorasExtrasDTO;
+import dsw.backendSiderandina.dto.ReportePuntualidadDTO;
 import dsw.backendSiderandina.model.AsistenciaDiaria;
 import dsw.backendSiderandina.service.AsistenciaService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,4 +48,30 @@ public class AsistenciaController {
         response.setHeader("Content-Disposition", "attachment; filename=asistencias.xlsx");
         asistenciaService.exportarAsistenciasExcel(response.getOutputStream());
     }
+
+    @GetMapping("/reporte-horas")
+    public List<ReporteAsistenciaDTO> reporteHorasTrabajadas(
+        @RequestParam(required = false) String fechaInicio,
+        @RequestParam(required = false) String fechaFin
+    ) {
+        return asistenciaService.obtenerReporteHorasTrabajadas(fechaInicio, fechaFin);
+    }
+
+    @GetMapping("/reporte-puntualidad")
+    public ReportePuntualidadDTO reportePuntualidad(
+        @RequestParam(required = false) String fechaInicio,
+        @RequestParam(required = false) String fechaFin
+    ) {
+        return asistenciaService.obtenerReportePuntualidad(fechaInicio, fechaFin);
+    }
+
+    @GetMapping("/reporte-horas-extras")
+    public List<ReporteHorasExtrasDTO> reporteHorasExtras(
+        @RequestParam(required = false) String fechaInicio,
+        @RequestParam(required = false) String fechaFin
+    ) {
+    return asistenciaService.obtenerReporteHorasExtras(fechaInicio, fechaFin);
+    }
+
+
 }

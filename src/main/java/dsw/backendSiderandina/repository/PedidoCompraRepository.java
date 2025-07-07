@@ -20,4 +20,17 @@ public interface PedidoCompraRepository extends JpaRepository<PedidoCompra, Inte
 
     @Query("SELECT p FROM PedidoCompra p WHERE p.estadoPedido.idEstadoPedido <> 1 ORDER BY p.estadoPedido.idEstadoPedido ASC, p.fechaPedido DESC")
     List<PedidoCompra> findAllPedidosEnviadosYEntregados();
+
+    @Query(value = "SELECT " +
+            "p.ruc as ruc, " +
+            "p.razon_social as razonSocial, " +
+            "COUNT(pc.id_pedido_compra) as totalPedidos, " +
+            "SUM(pc.monto_total) as montoTotalCompras, " +
+            "AVG(pc.monto_total) as promedioPorPedido " +
+            "FROM pedido_compra pc " +
+            "JOIN proveedor p ON pc.id_proveedor = p.id_proveedor " +
+            "GROUP BY p.ruc, p.razon_social " +
+            "ORDER BY montoTotalCompras DESC",
+            nativeQuery = true)
+    List<Object[]> reporteComprasPorProveedorRaw();
 }
