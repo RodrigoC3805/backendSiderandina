@@ -31,6 +31,9 @@ public class DetalleCompra {
     @Column(name="monto_subtotal_linea")
     private Double montoSubtotalLinea;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_estado_detalle_compra", referencedColumnName = "id_estado_detalle_compra")
+    private EstadoDetalleCompra estadoDetalleCompra;
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="id_pedido_compra", referencedColumnName = "id_pedido_compra")
     private PedidoCompra pedidoCompra;

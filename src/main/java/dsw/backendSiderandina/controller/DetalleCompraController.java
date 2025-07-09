@@ -8,15 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dsw.backendSiderandina.model.DetalleCompra;
 import dsw.backendSiderandina.model.EstadoDetalleCompra;
+import dsw.backendSiderandina.model.EstadoPedido;
 import dsw.backendSiderandina.model.PedidoCompra;
 import dsw.backendSiderandina.repository.DetalleCompraRepository;
 import dsw.backendSiderandina.repository.EstadoDetalleCompraRepository;
+import dsw.backendSiderandina.repository.EstadoPedidoRepository;
+import dsw.backendSiderandina.repository.PedidoCompraRepository;
 import dsw.backendSiderandina.utils.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +34,10 @@ public class DetalleCompraController {
     DetalleCompraRepository detalleCompraRepository;
     @Autowired
     EstadoDetalleCompraRepository estadoDetalleCompraRepository;
+    @Autowired
+    PedidoCompraRepository pedidoCompraRepository;
+    @Autowired
+    EstadoPedidoRepository estadoPedidoRepository;
     @PostMapping("/find")
     public ResponseEntity<?> getDetalleComprabyCompraId(@RequestBody PedidoCompra pedidoCompra) {
         List<DetalleCompra> listaDetalleCompra = null;
@@ -54,6 +62,20 @@ public class DetalleCompraController {
             logger.error("Error al crear detalles de compra", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ErrorResponse.builder().message("Error al crear detalles de compra").build());
+        }
+    }
+    @PutMapping("actualizar-estados")
+    public ResponseEntity<?> updateEstadosDetalles(@RequestBody List<DetalleCompra> detallesCompra) {
+        try {
+            List<DetalleCompra> savedDetalles = detalleCompraRepository.saveAll(detallesCompra);
+            PedidoCompra pedidoCompra = detallesCompra.get(0).getPedidoCompra();
+            pedidoCompra.setEstadoPedido(estadoPedidoRepository.findById(3).get());
+            pedidoCompraRepository.save(pedidoCompra);
+            return ResponseEntity.ok(savedDetalles);
+        } catch (Exception e) {
+            logger.error("Error al crear detalles de compra", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ErrorResponse.builder().message("Error al actualizar detalles de compra").build());
         }
     }
     @GetMapping("estados")
