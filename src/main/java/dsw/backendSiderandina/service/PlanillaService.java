@@ -104,4 +104,5 @@ public class PlanillaService {
         return planillaRepository.findPlanillasConCantidadTrabajadores();
     }
 
+
 }
