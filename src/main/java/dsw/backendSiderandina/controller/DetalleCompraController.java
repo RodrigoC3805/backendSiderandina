@@ -13,9 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dsw.backendSiderandina.model.DetalleCompra;
+import dsw.backendSiderandina.model.EstadoDetalleCompra;
 import dsw.backendSiderandina.model.PedidoCompra;
 import dsw.backendSiderandina.repository.DetalleCompraRepository;
+import dsw.backendSiderandina.repository.EstadoDetalleCompraRepository;
 import dsw.backendSiderandina.utils.ErrorResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping(path="api/almacen/detallecompra")
@@ -23,7 +28,8 @@ public class DetalleCompraController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     DetalleCompraRepository detalleCompraRepository;
-
+    @Autowired
+    EstadoDetalleCompraRepository estadoDetalleCompraRepository;
     @PostMapping("/find")
     public ResponseEntity<?> getDetalleComprabyCompraId(@RequestBody PedidoCompra pedidoCompra) {
         List<DetalleCompra> listaDetalleCompra = null;
@@ -50,4 +56,16 @@ public class DetalleCompraController {
                     .body(ErrorResponse.builder().message("Error al crear detalles de compra").build());
         }
     }
+    @GetMapping("estados")
+    public ResponseEntity<?> getEstados() {
+        try {
+            List<EstadoDetalleCompra> estados = estadoDetalleCompraRepository.findAll();
+            return ResponseEntity.ok(estados);
+        } catch (Exception e) {
+            logger.error("Error al obtener estados", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ErrorResponse.builder().message("Error al obtener estados").build());
+        }
+    }
+
 }
