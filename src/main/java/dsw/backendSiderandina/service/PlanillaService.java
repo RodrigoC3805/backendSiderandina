@@ -97,7 +97,10 @@ public class PlanillaService {
         return respuesta;
     }
     
-    public List<PlanillaResumenResponse> listarPlanillasResumen() {
+    public List<PlanillaResumenResponse> listarPlanillasResumen(Integer anio) {
+        if (anio != null) {
+            return planillaRepository.findPlanillasConCantidadTrabajadoresByAnio(anio);
+        }
         return planillaRepository.findPlanillasConCantidadTrabajadores();
     }
 

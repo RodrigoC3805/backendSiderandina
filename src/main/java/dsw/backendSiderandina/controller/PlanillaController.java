@@ -30,7 +30,7 @@ public class PlanillaController {
     }
     // Ver históricos de planillas 
     @GetMapping
-    public List<PlanillaResumenResponse> listarPlanillasResumen() {
-        return planillaService.listarPlanillasResumen();
+    public List<PlanillaResumenResponse> listarPlanillasResumen(@RequestParam(required = false) Integer anio) {
+        return planillaService.listarPlanillasResumen(anio);
     }
 }

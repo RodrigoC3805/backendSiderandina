@@ -1,5 +1,6 @@
 package dsw.backendSiderandina.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,12 +14,17 @@ import dsw.backendSiderandina.model.EstadoContrato;
 import dsw.backendSiderandina.model.Trabajador;
 import dsw.backendSiderandina.model.Cliente;
 import dsw.backendSiderandina.model.Contrato;
+import dsw.backendSiderandina.model.Planilla;
+import dsw.backendSiderandina.model.DetallePlanilla;
 import dsw.backendSiderandina.repository.EstadoContratoRepository;
 import dsw.backendSiderandina.repository.TrabajadorRepository;
 import dsw.backendSiderandina.repository.TipoDocumentoRepository;
 import dsw.backendSiderandina.repository.TipoTrabajadorRepository;
 import dsw.backendSiderandina.repository.ContratoRepository;
+import dsw.backendSiderandina.repository.PlanillaRepository;
+import dsw.backendSiderandina.repository.DetallePlanillaRepository;
 import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class TrabajadorService {
     @Autowired
@@ -36,6 +42,11 @@ public class TrabajadorService {
     @Autowired
     EstadoContratoRepository estadoContratoRepository;
 
+    @Autowired
+    PlanillaRepository planillaRepository;
+    @Autowired
+    DetallePlanillaRepository detallePlanillaRepository;
+
     public TrabajadorResponse createTrabajador(TrabajadorRequest trabajadorRequest) {
         Trabajador trabajador = Trabajador.builder()
                 .tipoDocumento(tipoDocumentoRepository.findById(trabajadorRequest.getIdTipoDocumento()).orElse(null))
@@ -48,10 +59,11 @@ public class TrabajadorService {
 
         trabajador = trabajadorRepository.save(trabajador);
 
+        Contrato contrato = null;
         // Crear contrato si se envían los datos
         if (trabajadorRequest.getFechaInicioContrato() != null && trabajadorRequest.getSueldo() != null) {
             EstadoContrato estadoContrato = estadoContratoRepository.findById(trabajadorRequest.getIdEstadoContrato()).orElse(null);
-            Contrato contrato = Contrato.builder()
+            contrato = Contrato.builder()
                 .trabajador(trabajador)
                 .estadoContrato(estadoContrato)
                 .fechaInicio(trabajadorRequest.getFechaInicioContrato())
@@ -61,13 +73,40 @@ public class TrabajadorService {
             contratoRepository.save(contrato);
         }
 
+        // AGREGADO: asociar a planilla existente del mes/año actual y actualizar totalSueldos
+        if (contrato != null) {
+            LocalDate hoy = LocalDate.now();
+            int mes = hoy.getMonthValue();
+            int anio = hoy.getYear();
+            List<Planilla> planillas = planillaRepository.findByMesAndAnio(mes, anio);
+            if (!planillas.isEmpty()) {
+                Planilla planilla = planillas.get(0);
+                DetallePlanilla detalle = new DetallePlanilla();
+                detalle.setPlanilla(planilla);
+                detalle.setTrabajador(trabajador);
+                detalle.setSueldoBase(contrato.getRemuneracion());
+                detalle.setBonos(0.0);
+                detalle.setDescuentos(0.0);
+                detalle.setSueldoNeto(contrato.getRemuneracion());
+                detallePlanillaRepository.save(detalle);
+
+                // Recalcular total de sueldos
+                List<DetallePlanilla> detalles = detallePlanillaRepository.findByPlanilla_IdPlanilla(planilla.getIdPlanilla());
+                double totalSueldos = detalles.stream()
+                    .mapToDouble(d -> d.getSueldoNeto() != null ? d.getSueldoNeto() : 0.0)
+                    .sum();
+                planilla.setTotalSueldos(totalSueldos);
+                planillaRepository.save(planilla);
+            }
+        }
+
         return TrabajadorResponse.fromEntity(trabajador);
     }
 
+    // ...resto del código sin cambios...
     public TrabajadorResponse getTrabajador(Integer idTrabajador) {
         Trabajador trabajador = trabajadorRepository.findById(idTrabajador)
             .orElseThrow(() -> new EntityNotFoundException("Trabajador no encontrado con ID: " + idTrabajador));
-        // Busca el contrato más relevante
         Contrato contrato = contratoRepository.findTopByTrabajadorIdTrabajadorAndEstadoContratoDescripcionOrderByFechaFinDesc(
             trabajador.getIdTrabajador(), "Activo"
         );
@@ -78,26 +117,21 @@ public class TrabajadorService {
     }
     
     public void eliminarTrabajador(Integer idTrabajador) {
-        // Elimina primero los contratos asociados
         contratoRepository.deleteAll(contratoRepository.findByTrabajadorIdTrabajador(idTrabajador));
-        // Luego elimina el trabajador
         trabajadorRepository.deleteById(idTrabajador);
     }
 
-    // Este es el método que tu frontend debe consumir
     public List<TrabajadorListItem> listarTrabajadores() {
         return trabajadorRepository.findAll().stream()
             .map(trabajador -> {
-                // Busca el contrato "Activo"
                 Contrato contrato = contratoRepository.findTopByTrabajadorIdTrabajadorAndEstadoContratoDescripcionOrderByFechaFinDesc(
                     trabajador.getIdTrabajador(), "Activo"
                 );
-                // Si no hay contrato "Activo", busca el más reciente
                 if (contrato == null) {
                     contrato = contratoRepository.findTopByTrabajadorIdTrabajadorOrderByFechaFinDesc(trabajador.getIdTrabajador());
                 }
                 Double sueldo = contrato != null && contrato.getRemuneracion() != null ? contrato.getRemuneracion() : 0.0;
-                String moneda = "Soles"; // Cambia si tienes el campo en tu modelo
+                String moneda = "Soles";
                 String estadoContrato = contrato != null && contrato.getEstadoContrato() != null
                         ? contrato.getEstadoContrato().getDescripcion()
                         : "";
@@ -128,7 +162,6 @@ public class TrabajadorService {
 
         trabajador = trabajadorRepository.save(trabajador);
 
-        // Actualiza o crea el contrato
         Contrato contrato = contratoRepository.findTopByTrabajadorIdTrabajadorOrderByFechaFinDesc(idTrabajador);
         if (contrato == null) {
             contrato = new Contrato();
